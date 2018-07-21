@@ -141,34 +141,34 @@ inline size_t Cusp::find(double epsd) const
 
 inline T2s Cusp::Sig(const T2s &Eps) const
 {
-  // decompose strain: hydrostatic part, deviatoric part
-  T2d    I    = T2d::I();
-  double epsm = Eps.trace()/3.;
-  T2s    Epsd = Eps - epsm * I;
-  double epsd = std::sqrt(.5*Epsd.ddot(Epsd));
+  // decompose strain
+  T2d    I     = T2d::I();
+  double treps = Eps.trace();
+  T2s    Epsd  = Eps - (treps/3.) * I;
+  double epsd  = std::sqrt(.5*Epsd.ddot(Epsd));
 
   // no deviatoric strain -> only hydrostatic stress
-  if ( epsd <= 0. ) return (3.*m_kappa*epsm) * I;
+  if ( epsd <= 0. ) return m_kappa * treps * I;
 
   // read current yield strains
   size_t i       = find(epsd);
   double eps_min = ( m_epsy[i+1] + m_epsy[i] ) / 2.;
 
   // return stress tensor
-  return (3.*m_kappa*epsm) * I + ( 2. * m_mu * (1.-eps_min/epsd) ) * Epsd;
+  return m_kappa * treps * I + 2.0 * m_mu * (1.-eps_min/epsd) * Epsd;
 }
 
 // -------------------------------------------- energy ---------------------------------------------
 
 inline double Cusp::energy(const T2s &Eps) const
 {
-  // decompose strain: hydrostatic part, deviatoric part
-  double epsm = Eps.trace()/3.;
-  T2s    Epsd = Eps - epsm * T2d::I();
-  double epsd = std::sqrt(.5*Epsd.ddot(Epsd));
+  // decompose strain
+  double treps = Eps.trace();
+  T2s    Epsd  = Eps - (treps/3.) * T2d::I();
+  double epsd  = std::sqrt(.5*Epsd.ddot(Epsd));
 
   // hydrostatic part of the energy
-  double U = 9./2. * m_kappa * std::pow(epsm,2.);
+  double U = 0.5 * m_kappa * std::pow(treps,2.);
 
   // read current yield strain
   size_t i       = find(epsd);
@@ -176,7 +176,7 @@ inline double Cusp::energy(const T2s &Eps) const
   double deps_y  = ( m_epsy[i+1] - m_epsy[i] ) / 2.;
 
   // deviatoric part of the energy
-  double V = 2. * m_mu * ( std::pow(epsd-eps_min,2.) - std::pow(deps_y,2.) );
+  double V = 2.0 * m_mu * ( std::pow(epsd-eps_min,2.) - std::pow(deps_y,2.) );
 
   // return total energy
   return U + V;

@@ -93,28 +93,27 @@ inline size_t Elastic::find(double epsd) const
 
 inline T2s Elastic::Sig(const T2s &Eps) const
 {
-  // decompose strain: hydrostatic part, deviatoric part
-  T2d    I    = T2d::I();
-  double epsm = Eps.trace()/3.;
-  T2s    Epsd = Eps - epsm * I;
+  // decompose strain
+  T2d    I     = T2d::I();
+  double treps = Eps.trace();
+  T2s    Epsd  = Eps - (treps/3.) * I;
 
   // return stress tensor
-  return ( 3. * m_kappa * epsm ) * I + 2. * m_mu * Epsd;
+  return m_kappa * treps * I + 2. * m_mu * Epsd;
 }
 
 // -------------------------------------------- energy ---------------------------------------------
 
 inline double Elastic::energy(const T2s &Eps) const
 {
-  // decompose strain: hydrostatic part, deviatoric part
-  double epsm = Eps.trace()/3.;
-  T2s    Epsd = Eps - epsm * T2d::I();
-  double epsd = std::sqrt(.5*Epsd.ddot(Epsd));
+  // decompose strain
+  double treps = Eps.trace();
+  T2s    Epsd  = Eps - (treps/3.) * T2d::I();
+  double epsd  = std::sqrt(.5*Epsd.ddot(Epsd));
 
-  // hydrostatic part of the energy
-  double U = 9./2. * m_kappa * std::pow(epsm,2.);
-  // deviatoric part of the energy
-  double V = 2. * m_mu * std::pow(epsd,2.);
+  // energy components
+  double U = 0.5 * m_kappa * std::pow(treps,2.);
+  double V = 2.0 * m_mu    * std::pow(epsd ,2.);
 
   // return total energy
   return U + V;
