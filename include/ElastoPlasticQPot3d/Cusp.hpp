@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef ELASTOPLASTICQPOT3D_SMOOTH_HPP
-#define ELASTOPLASTICQPOT3D_SMOOTH_HPP
+#ifndef ELASTOPLASTICQPOT3D_CUSP_HPP
+#define ELASTOPLASTICQPOT3D_CUSP_HPP
 
 // -------------------------------------------------------------------------------------------------
 
@@ -17,7 +17,7 @@ namespace ElastoPlasticQPot3d {
 
 // ------------------------------------------ constructor ------------------------------------------
 
-inline Smooth::Smooth(double kappa, double mu, const std::vector<double> &epsy, bool init_elastic)
+inline Cusp::Cusp(double kappa, double mu, const std::vector<double> &epsy, bool init_elastic)
 {
   // copy input - elastic moduli
   m_kappa = kappa;
@@ -53,37 +53,37 @@ inline Smooth::Smooth(double kappa, double mu, const std::vector<double> &epsy, 
 
 // ------------------------------------------ parameters -------------------------------------------
 
-inline double Smooth::kappa() const
+inline double Cusp::kappa() const
 {
   return m_kappa;
 }
 
 // ------------------------------------------ parameters -------------------------------------------
 
-inline double Smooth::mu() const
+inline double Cusp::mu() const
 {
   return m_mu;
 }
 
 // ---------------------------------- equivalent deviator strain -----------------------------------
 
-inline double Smooth::epsd(const T2s &Eps) const
+inline double Cusp::epsd(const T2s &Eps) const
 {
-  T2s Epsd = Eps - Eps.trace()/3. * T2d::I();
+  auto Epsd = Eps - trace(Eps)/ND * xt::eye(ndim);
 
-  return std::sqrt(.5*Epsd.ddot(Epsd));
+  return std::sqrt(.5*ddot(Epsd,Epsd));
 }
 
 // ----------------------------------- equivalent plastic strain -----------------------------------
 
-inline double Smooth::epsp(const T2s &Eps) const
+inline double Cusp::epsp(const T2s &Eps) const
 {
   return epsp(epsd(Eps));
 }
 
 // ----------------------------------- equivalent plastic strain -----------------------------------
 
-inline double Smooth::epsp(double epsd) const
+inline double Cusp::epsp(double epsd) const
 {
   size_t i = find(epsd);
 
@@ -92,21 +92,21 @@ inline double Smooth::epsp(double epsd) const
 
 // ----------------------------------------- yield stress ------------------------------------------
 
-inline double Smooth::epsy(size_t i) const
+inline double Cusp::epsy(size_t i) const
 {
   return m_epsy[i];
 }
 
 // ------------------------------------- find potential index --------------------------------------
 
-inline size_t Smooth::find(const T2s &Eps) const
+inline size_t Cusp::find(const T2s &Eps) const
 {
   return find(epsd(Eps));
 }
 
 // ------------------------------------- find potential index --------------------------------------
 
-inline size_t Smooth::find(double epsd) const
+inline size_t Cusp::find(double epsd) const
 {
   // check extremes
   if ( epsd < m_epsy.front() or epsd >= m_epsy.back() )
@@ -139,45 +139,43 @@ inline size_t Smooth::find(double epsd) const
 
 // -------------------------------------------- stress ---------------------------------------------
 
-inline T2s Smooth::Sig(const T2s &Eps) const
+inline T2s Cusp::Sig(const T2s &Eps) const
 {
-  // decompose strain
-  T2d    I     = T2d::I();
-  double treps = Eps.trace();
-  T2s    Epsd  = Eps - (treps/3.) * I;
-  double epsd  = std::sqrt(.5*Epsd.ddot(Epsd));
+  // decompose strain: hydrostatic part, deviatoric part
+  auto treps = trace(Eps);
+  auto Epsd  = Eps - treps/ND * xt::eye(ndim);
+  auto epsd  = std::sqrt(.5*ddot(Epsd,Epsd));
 
   // no deviatoric strain -> only hydrostatic stress
-  if ( epsd <= 0. ) return m_kappa * treps * I;
+  if ( epsd <= 0. ) return m_kappa * treps * xt::eye(ndim);
 
   // read current yield strains
-  size_t i       = find(epsd);
-  double eps_min = ( m_epsy[i+1] + m_epsy[i] ) / 2.;
-  double deps_y  = ( m_epsy[i+1] - m_epsy[i] ) / 2.;
+  auto i       = find(epsd);
+  auto eps_min = ( m_epsy[i+1] + m_epsy[i] ) / 2.;
 
   // return stress tensor
-  return m_kappa*treps*I + (2.*m_mu/epsd)*(deps_y/M_PI)*sin(M_PI/deps_y*(epsd-eps_min))*Epsd;
+  return m_kappa * treps * xt::eye(ndim) + 2.0 * m_mu * (1.-eps_min/epsd) * Epsd;
 }
 
 // -------------------------------------------- energy ---------------------------------------------
 
-inline double Smooth::energy(const T2s &Eps) const
+inline double Cusp::energy(const T2s &Eps) const
 {
-  // decompose strain
-  double treps = Eps.trace();
-  T2s    Epsd  = Eps - (treps/3.) * T2d::I();
-  double epsd  = std::sqrt(.5*Epsd.ddot(Epsd));
+  // decompose strain: hydrostatic part, deviatoric part
+  auto treps = trace(Eps);
+  auto Epsd  = Eps - treps/ND * xt::eye(ndim);
+  auto epsd  = std::sqrt(.5*ddot(Epsd,Epsd));
 
   // hydrostatic part of the energy
-  double U = 0.5 * m_kappa * std::pow(treps,2.);
+  auto U = 0.5 * m_kappa * std::pow(treps,2.);
 
   // read current yield strain
-  size_t i       = find(epsd);
-  double eps_min = ( m_epsy[i+1] + m_epsy[i] ) / 2.;
-  double deps_y  = ( m_epsy[i+1] - m_epsy[i] ) / 2.;
+  auto i       = find(epsd);
+  auto eps_min = ( m_epsy[i+1] + m_epsy[i] ) / 2.;
+  auto deps_y  = ( m_epsy[i+1] - m_epsy[i] ) / 2.;
 
   // deviatoric part of the energy
-  double V = -4.0 * m_mu * std::pow(deps_y/M_PI,2.) * ( 1. + cos( M_PI/deps_y * (epsd-eps_min) ) );
+  auto V = 2.0 * m_mu * ( std::pow(epsd-eps_min,2.) - std::pow(deps_y,2.) );
 
   // return total energy
   return U + V;
