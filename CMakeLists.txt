@@ -13,16 +13,16 @@ include(GNUInstallDirs)
 project(ElastoPlasticQPot3d)
 
 # file that contains the version information
-set(parse_version src/${PROJECT_NAME}/${PROJECT_NAME}.h)
+set(parse_version include/${PROJECT_NAME}/${PROJECT_NAME}.h)
 
 # header files
 set(headers
-  src/${PROJECT_NAME}/ElastoPlasticQPot3d.h
-  src/${PROJECT_NAME}/equivalent.hpp
-  src/${PROJECT_NAME}/Matrix.hpp
-  src/${PROJECT_NAME}/Elastic.hpp
-  src/${PROJECT_NAME}/Cusp.hpp
-  src/${PROJECT_NAME}/Smooth.hpp
+  include/${PROJECT_NAME}/ElastoPlasticQPot3d.h
+  include/${PROJECT_NAME}/equivalent.hpp
+  include/${PROJECT_NAME}/Matrix.hpp
+  include/${PROJECT_NAME}/Elastic.hpp
+  include/${PROJECT_NAME}/Cusp.hpp
+  include/${PROJECT_NAME}/Smooth.hpp
 )
 
 # automatically parse the version number

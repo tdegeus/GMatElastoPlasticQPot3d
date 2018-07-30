@@ -7,9 +7,9 @@ from setuptools import setup, Extension
 import sys,re
 import setuptools
 import pybind11
-import cppmat
+import pyxtensor
 
-header = open('src/ElastoPlasticQPot3d/ElastoPlasticQPot3d.h','r').read()
+header = open('include/ElastoPlasticQPot3d/ElastoPlasticQPot3d.h','r').read()
 world  = re.split(r'(.*)(\#define ELASTOPLASTICQPOT3D_WORLD_VERSION\ )([0-9]+)(.*)',header)[3]
 major  = re.split(r'(.*)(\#define ELASTOPLASTICQPOT3D_MAJOR_VERSION\ )([0-9]+)(.*)',header)[3]
 minor  = re.split(r'(.*)(\#define ELASTOPLASTICQPOT3D_MINOR_VERSION\ )([0-9]+)(.*)',header)[3]
@@ -19,13 +19,14 @@ __version__ = '.'.join([world,major,minor])
 ext_modules = [
   Extension(
     'ElastoPlasticQPot3d',
-    ['src/ElastoPlasticQPot3d/python.cpp'],
+    ['include/ElastoPlasticQPot3d/python.cpp'],
     include_dirs=[
       pybind11.get_include(False),
       pybind11.get_include(True ),
-      cppmat  .get_include(False),
-      cppmat  .get_include(True ),
-      cppmat  .find_eigen()
+      pyxtensor.get_include(False),
+      pyxtensor.get_include(True ),
+      pyxtensor.find_xtensor(),
+      pyxtensor.find_xtl(),
     ],
     language='c++'
   ),
@@ -41,7 +42,7 @@ setup(
   author_email     = 'tom@geus.me',
   url              = 'https://github.com/tdegeus/ElastoPlasticQPot3d',
   ext_modules      = ext_modules,
-  install_requires = ['pybind11>=2.2.0','cppmat>=0.4.1'],
-  cmdclass         = {'build_ext': cppmat.BuildExt},
+  install_requires = ['pybind11>=2.2.0'],
+  cmdclass         = {'build_ext': pyxtensor.BuildExt},
   zip_safe         = False,
 )

@@ -3,8 +3,10 @@
 
 #define EQ(a,b) REQUIRE_THAT( (a), Catch::WithinAbs((b), 1.e-12) );
 
-#include "../src/ElastoPlasticQPot3d/ElastoPlasticQPot3d.h"
+#include "../include/ElastoPlasticQPot3d/ElastoPlasticQPot3d.h"
 #include <ElastoPlasticQPot/ElastoPlasticQPot.h>
+
+#include <xtensor/xrandom.hpp>
 
 namespace GM = ElastoPlasticQPot3d;
 namespace RF = ElastoPlasticQPot::Cartesian2d;
@@ -28,7 +30,11 @@ SECTION( "Elastic" )
 
   // initialize strain
   // - random strain
-  GM::T2s Eps_GM = GM::T2s::Random();
+  GM::T2s Eps_GM = xt::random::rand<double>({GM::ndim, GM::ndim});
+  // - make symmetric
+  Eps_GM(1,0) = Eps_GM(0,1);
+  Eps_GM(2,0) = Eps_GM(0,2);
+  Eps_GM(2,1) = Eps_GM(1,2);
   // - make plane strain, isochoric
   Eps_GM(0,2) = Eps_GM(2,0) = Eps_GM(1,2) = Eps_GM(2,1) = Eps_GM(2,2) = 0.;
   // - make isochoric
@@ -80,7 +86,11 @@ SECTION( "Cusp" )
 
   // initialize strain
   // - random strain
-  GM::T2s Eps_GM = GM::T2s::Random();
+  GM::T2s Eps_GM = xt::random::rand<double>({GM::ndim, GM::ndim});
+  // - make symmetric
+  Eps_GM(1,0) = Eps_GM(0,1);
+  Eps_GM(2,0) = Eps_GM(0,2);
+  Eps_GM(2,1) = Eps_GM(1,2);
   // - make plane strain, isochoric
   Eps_GM(0,2) = Eps_GM(2,0) = Eps_GM(1,2) = Eps_GM(2,1) = Eps_GM(2,2) = 0.;
   // - make isochoric
@@ -132,7 +142,11 @@ SECTION( "Smooth" )
 
   // initialize strain
   // - random strain
-  GM::T2s Eps_GM = GM::T2s::Random();
+  GM::T2s Eps_GM = xt::random::rand<double>({GM::ndim, GM::ndim});
+  // - make symmetric
+  Eps_GM(1,0) = Eps_GM(0,1);
+  Eps_GM(2,0) = Eps_GM(0,2);
+  Eps_GM(2,1) = Eps_GM(1,2);
   // - make plane strain, isochoric
   Eps_GM(0,2) = Eps_GM(2,0) = Eps_GM(1,2) = Eps_GM(2,1) = Eps_GM(2,2) = 0.;
   // - make isochoric
@@ -184,7 +198,7 @@ SECTION( "Matrix" )
 
   // row 0: elastic
   {
-    GM::ArrS I = GM::ArrS::Zero(mat_GM.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat_GM.shape());
 
     for ( size_t k = 0 ; k < mat_GM.shape(1) ; ++k ) I(0,k) = 1;
 
@@ -192,7 +206,7 @@ SECTION( "Matrix" )
   }
   // row 0: elastic
   {
-    RF::ArrS I = RF::ArrS::Zero(mat_RF.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat_RF.shape());
 
     for ( size_t k = 0 ; k < mat_RF.shape(1) ; ++k ) I(0,k) = 1;
 
@@ -201,7 +215,7 @@ SECTION( "Matrix" )
 
   // row 1: cups
   {
-    GM::ArrS I = GM::ArrS::Zero(mat_GM.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat_GM.shape());
 
     std::vector<double> epsy = {0.01, 0.2, 2.0};
 
@@ -211,7 +225,7 @@ SECTION( "Matrix" )
   }
   // row 1: cups
   {
-    RF::ArrS I = RF::ArrS::Zero(mat_RF.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat_RF.shape());
 
     std::vector<double> epsy = {0.01, 0.2, 2.0};
 
@@ -222,7 +236,7 @@ SECTION( "Matrix" )
 
   // row 2: smooth
   {
-    GM::ArrS I = GM::ArrS::Zero(mat_GM.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat_GM.shape());
 
     std::vector<double> epsy = {0.01, 0.2, 2.0};
 
@@ -232,7 +246,7 @@ SECTION( "Matrix" )
   }
   // row 2: smooth
   {
-    RF::ArrS I = RF::ArrS::Zero(mat_RF.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat_RF.shape());
 
     std::vector<double> epsy = {0.01, 0.2, 2.0};
 
@@ -243,41 +257,46 @@ SECTION( "Matrix" )
 
   // initialize strain
   // - allocate
-  GM::ArrD eps_GM = GM::ArrD::Zero({3,2,GM::T2s::Size()});
-  RF::ArrD eps_RF = RF::ArrD::Zero({3,2,RF::T2s::Size()});
+  xt::xtensor<double,4> eps_GM = xt::zeros<double>({std::size_t(3),std::size_t(2),GM::ndim,GM::ndim});
+  xt::xtensor<double,4> eps_RF = xt::zeros<double>({std::size_t(3),std::size_t(2),RF::ndim,RF::ndim});
   // - fill
   for ( size_t e = 0 ; e < 3 ; ++e ) {
     for ( size_t k = 0 ; k < 2 ; ++k ) {
       // -- random strain
-      GM::T2s tmp = GM::T2s::Random();
+      GM::T2s tmp = xt::random::rand<double>({GM::ndim, GM::ndim});
       // -- store set epsxy
-      eps_GM(e,k,1) = tmp(0,0);
-      eps_RF(e,k,1) = tmp(0,0);
+      eps_GM(e,k,0,1) = tmp(0,1);
+      eps_GM(e,k,1,0) = tmp(0,1);
+      eps_RF(e,k,0,1) = tmp(0,1);
+      eps_RF(e,k,1,0) = tmp(0,1);
       // -- store set epsxx
-      eps_GM(e,k,0) = tmp(1,1);
-      eps_RF(e,k,0) = tmp(1,1);
+      eps_GM(e,k,0,0) = tmp(1,1);
+      eps_RF(e,k,0,0) = tmp(1,1);
       // -- store set epsxx
-      eps_GM(e,k,3) = -tmp(1,1);
-      eps_RF(e,k,2) = -tmp(1,1);
+      eps_GM(e,k,1,1) = -tmp(1,1);
+      eps_RF(e,k,1,1) = -tmp(1,1);
     }
   }
 
   // - stress & plastic strain
-  GM::ArrD sig_GM  = mat_GM.Sig (eps_GM);
-  RF::ArrD sig_RF  = mat_RF.Sig (eps_RF);
-  GM::ArrD epsp_GM = mat_GM.epsp(eps_GM);
-  RF::ArrD epsp_RF = mat_RF.epsp(eps_RF);
+  xt::xtensor<double,4> sig_GM  = mat_GM.Sig (eps_GM);
+  xt::xtensor<double,4> sig_RF  = mat_RF.Sig (eps_RF);
+  xt::xtensor<double,2> epsp_GM = mat_GM.epsp(eps_GM);
+  xt::xtensor<double,2> epsp_RF = mat_RF.epsp(eps_RF);
 
   // - check
   for ( size_t e = 0 ; e < 3 ; ++e ) {
     for ( size_t k = 0 ; k < 2 ; ++k ) {
-      EQ( sig_GM (e,k,0), sig_RF (e,k,0) );
-      EQ( sig_GM (e,k,1), sig_RF (e,k,1) );
-      EQ( sig_GM (e,k,3), sig_RF (e,k,2) );
-      EQ( epsp_GM(e,k)  , epsp_RF(e,k)   );
-      EQ( sig_GM (e,k,2), 0.             );
-      EQ( sig_GM (e,k,4), 0.             );
-      EQ( sig_GM (e,k,5), 0.             );
+      EQ( sig_GM (e,k,0,0), sig_RF (e,k,0,0) );
+      EQ( sig_GM (e,k,0,1), sig_RF (e,k,0,1) );
+      EQ( sig_GM (e,k,1,0), sig_RF (e,k,1,0) );
+      EQ( sig_GM (e,k,1,1), sig_RF (e,k,1,1) );
+      EQ( epsp_GM(e,k)    , epsp_RF(e,k)     );
+      EQ( sig_GM (e,k,0,2), 0.               );
+      EQ( sig_GM (e,k,2,0), 0.               );
+      EQ( sig_GM (e,k,1,2), 0.               );
+      EQ( sig_GM (e,k,2,1), 0.               );
+      EQ( sig_GM (e,k,2,2), 0.               );
     }
   }
 }
