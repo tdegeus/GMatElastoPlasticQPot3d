@@ -18,7 +18,7 @@ set(parse_version include/${PROJECT_NAME}/${PROJECT_NAME}.h)
 # header files
 set(headers
   include/${PROJECT_NAME}/ElastoPlasticQPot3d.h
-  include/${PROJECT_NAME}/equivalent.hpp
+  include/${PROJECT_NAME}/Cartesian3d.hpp
   include/${PROJECT_NAME}/Matrix.hpp
   include/${PROJECT_NAME}/Elastic.hpp
   include/${PROJECT_NAME}/Cusp.hpp
