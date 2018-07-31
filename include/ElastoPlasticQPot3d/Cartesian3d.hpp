@@ -19,14 +19,16 @@ namespace ElastoPlasticQPot3d {
 
 // --------------------------------------------- trace ---------------------------------------------
 
-inline double trace(const T2s &A)
+template<class T>
+inline double trace(const T &A)
 {
   return A(0,0) + A(1,1) + A(2,2);
 }
 
 // -------------------------------------- double dot product ---------------------------------------
 
-inline double ddot(const T2s &A, const T2s &B)
+template<class T>
+inline double ddot(const T &A, const T &B)
 {
   return A(0,0) * B(0,0)
       +  A(0,1) * B(0,1) * 2.
@@ -49,7 +51,8 @@ inline double epsm(const T2s &Eps)
 
 inline double epsd(const T2s &Eps)
 {
-  T2s Epsd = Eps - trace(Eps)/ND * xt::eye(ndim);
+  T2s I    = xt::eye(ndim);
+  T2s Epsd = Eps - trace(Eps)/ND * I;
 
   return std::sqrt(.5*ddot(Epsd,Epsd));
 }
@@ -58,7 +61,9 @@ inline double epsd(const T2s &Eps)
 
 inline T2s Epsd(const T2s &Eps)
 {
-  return Eps - trace(Eps)/ND * xt::eye(ndim);
+  T2s I = xt::eye(ndim);
+
+  return Eps - trace(Eps)/ND * I;
 }
 
 // -------------------------------------- hydrostatic stress ---------------------------------------
@@ -72,7 +77,8 @@ inline double sigm(const T2s &Sig)
 
 inline double sigd(const T2s &Sig)
 {
-  T2s Sigd = Sig - trace(Sig)/ND * xt::eye(ndim);
+  T2s I    = xt::eye(ndim);
+  T2s Sigd = Sig - trace(Sig)/ND * I;
 
   return std::sqrt(2.*ddot(Sigd,Sigd));
 }
@@ -81,7 +87,9 @@ inline double sigd(const T2s &Sig)
 
 inline T2s Sigd(const T2s &Sig)
 {
-  return Sig - trace(Sig)/ND * xt::eye(ndim);
+  T2s I = xt::eye(ndim);
+
+  return Sig - trace(Sig)/ND * I;
 }
 
 // ================================= TENSOR DECOMPOSITION - MATRIX =================================
@@ -134,6 +142,9 @@ inline void epsd(const xt::xtensor<double,4> &a_Eps, xt::xtensor<double,2> &a_ep
   // start threads (all allocated variables inside this block are local to each thread)
   #pragma omp parallel
   {
+    // identity tensor
+    T2s I = xt::eye(ndim);
+
     // loop over all points
     #pragma omp for
     for ( size_t e = 0 ; e < a_Eps.shape()[0] ; ++e )
@@ -143,7 +154,7 @@ inline void epsd(const xt::xtensor<double,4> &a_Eps, xt::xtensor<double,2> &a_ep
         // - strain tensor
         auto Eps = xt::view(a_Eps, e, k, xt::all(), xt::all());
         // - strain deviator
-        auto Epsd = Eps - trace(Eps)/ND * xt::eye(ndim);
+        auto Epsd = Eps - trace(Eps)/ND * I;
         // - equivalent value
         a_epsd(e,k) = std::sqrt(.5*ddot(Epsd,Epsd));
       }
@@ -175,6 +186,9 @@ inline void Epsd(const xt::xtensor<double,4> &a_Eps, xt::xtensor<double,4> &a_Ep
   // start threads (all allocated variables inside this block are local to each thread)
   #pragma omp parallel
   {
+    // identity tensor
+    T2s I = xt::eye(ndim);
+
     // loop over all points
     #pragma omp for
     for ( size_t e = 0 ; e < a_Eps.shape()[0] ; ++e )
@@ -185,7 +199,7 @@ inline void Epsd(const xt::xtensor<double,4> &a_Eps, xt::xtensor<double,4> &a_Ep
         auto Eps  = xt::view(a_Eps , e, k, xt::all(), xt::all());
         auto Epsd = xt::view(a_Epsd, e, k, xt::all(), xt::all());
         // - strain deviator
-        Epsd = Eps - trace(Eps)/ND * xt::eye(ndim);
+        Epsd = Eps - trace(Eps)/ND * I;
       }
     }
   }
@@ -250,6 +264,9 @@ inline void sigd(const xt::xtensor<double,4> &a_Sig, xt::xtensor<double,2> &a_si
   // start threads (all allocated variables inside this block are local to each thread)
   #pragma omp parallel
   {
+    // identity tensor
+    T2s I = xt::eye(ndim);
+
     // loop over all points
     #pragma omp for
     for ( size_t e = 0 ; e < a_Sig.shape()[0] ; ++e )
@@ -259,7 +276,7 @@ inline void sigd(const xt::xtensor<double,4> &a_Sig, xt::xtensor<double,2> &a_si
         // - strain tensor
         auto Sig = xt::view(a_Sig, e, k, xt::all(), xt::all());
         // - strain deviator
-        auto Sigd = Sig - trace(Sig)/ND * xt::eye(ndim);
+        auto Sigd = Sig - trace(Sig)/ND * I;
         // - equivalent value
         a_sigd(e,k) = std::sqrt(2.*ddot(Sigd,Sigd));
       }
@@ -291,6 +308,9 @@ inline void Sigd(const xt::xtensor<double,4> &a_Sig, xt::xtensor<double,4> &a_Si
   // start threads (all allocated variables inside this block are local to each thread)
   #pragma omp parallel
   {
+    // identity tensor
+    T2s I = xt::eye(ndim);
+
     // loop over all points
     #pragma omp for
     for ( size_t e = 0 ; e < a_Sig.shape()[0] ; ++e )
@@ -301,7 +321,7 @@ inline void Sigd(const xt::xtensor<double,4> &a_Sig, xt::xtensor<double,4> &a_Si
         auto Sig  = xt::view(a_Sig , e, k, xt::all(), xt::all());
         auto Sigd = xt::view(a_Sigd, e, k, xt::all(), xt::all());
         // - strain deviator
-        Sigd = Sig - trace(Sig)/ND * xt::eye(ndim);
+        Sigd = Sig - trace(Sig)/ND * I;
       }
     }
   }
@@ -396,6 +416,9 @@ inline double epsd_max(const xt::xtensor<double,4> &a_Eps)
   assert( a_Eps.shape()[2] == ndim );
   assert( a_Eps.shape()[3] == ndim );
 
+  // identity tensor
+  T2s I = xt::eye(ndim);
+
   // allocate maximum
   double out;
 
@@ -404,7 +427,7 @@ inline double epsd_max(const xt::xtensor<double,4> &a_Eps)
     // - strain tensor
     auto Eps = xt::view(a_Eps, 0, 0, xt::all(), xt::all());
     // - strain deviator
-    auto Epsd = Eps - trace(Eps)/ND * xt::eye(ndim);
+    auto Epsd = Eps - trace(Eps)/ND * I;
     // - equivalent value
     out = std::sqrt(.5*ddot(Epsd,Epsd));
   }
@@ -417,7 +440,7 @@ inline double epsd_max(const xt::xtensor<double,4> &a_Eps)
       // - strain tensor
       auto Eps = xt::view(a_Eps, e, k, xt::all(), xt::all());
       // - strain deviator
-      auto Epsd = Eps - trace(Eps)/ND * xt::eye(ndim);
+      auto Epsd = Eps - trace(Eps)/ND * I;
       // - equivalent value
       out = std::max(out, std::sqrt(.5*ddot(Epsd,Epsd)));
     }
@@ -434,6 +457,9 @@ inline double sigd_max(const xt::xtensor<double,4> &a_Sig)
   assert( a_Sig.shape()[2] == ndim );
   assert( a_Sig.shape()[3] == ndim );
 
+  // identity tensor
+  T2s I = xt::eye(ndim);
+
   // allocate maximum
   double out;
 
@@ -442,7 +468,7 @@ inline double sigd_max(const xt::xtensor<double,4> &a_Sig)
     // - stress tensor
     auto Sig = xt::view(a_Sig, 0, 0, xt::all(), xt::all());
     // - stress deviator
-    auto Sigd = Sig - trace(Sig)/ND * xt::eye(ndim);
+    auto Sigd = Sig - trace(Sig)/ND * I;
     // - equivalent value
     out = std::sqrt(.5*ddot(Sigd,Sigd));
   }
@@ -455,7 +481,7 @@ inline double sigd_max(const xt::xtensor<double,4> &a_Sig)
       // - stress tensor
       auto Sig = xt::view(a_Sig, e, k, xt::all(), xt::all());
       // - stress deviator
-      auto Sigd = Sig - trace(Sig)/ND * xt::eye(ndim);
+      auto Sigd = Sig - trace(Sig)/ND * I;
       // - equivalent value
       out = std::max(out, std::sqrt(2.*ddot(Sigd,Sigd)));
     }
