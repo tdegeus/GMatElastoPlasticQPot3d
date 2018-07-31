@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef ELASTOPLASTICQPOT3D_H
-#define ELASTOPLASTICQPOT3D_H
+#ifndef XELASTOPLASTICQPOT3D_H
+#define XELASTOPLASTICQPOT3D_H
 
 // --------------------------------------- include libraries ---------------------------------------
 
@@ -36,7 +36,7 @@
 #define ELASTOPLASTICQPOT3D_VERSION_AT_LEAST(x,y,z) \
   (ELASTOPLASTICQPOT3D_WORLD_VERSION>x || (ELASTOPLASTICQPOT3D_WORLD_VERSION>=x && \
   (ELASTOPLASTICQPOT3D_MAJOR_VERSION>y || (ELASTOPLASTICQPOT3D_MAJOR_VERSION>=y && \
-                              ELASTOPLASTICQPOT3D_MINOR_VERSION>=z))))
+                                           ELASTOPLASTICQPOT3D_MINOR_VERSION>=z))))
 
 #define ELASTOPLASTICQPOT3D_VERSION(x,y,z) \
   (ELASTOPLASTICQPOT3D_WORLD_VERSION==x && \
@@ -45,7 +45,7 @@
 
 // ====================================== ElastoPlasticQPot3d ======================================
 
-namespace ElastoPlasticQPot3d {
+namespace xElastoPlasticQPot3d {
 
 // --------------------------------------------- alias ---------------------------------------------
 

@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef ELASTOPLASTICQPOT3D_ARRAY_HPP
-#define ELASTOPLASTICQPOT3D_ARRAY_HPP
+#ifndef XELASTOPLASTICQPOT3D_ARRAY_HPP
+#define XELASTOPLASTICQPOT3D_ARRAY_HPP
 
 // -------------------------------------------------------------------------------------------------
 
@@ -13,7 +13,7 @@
 
 // =================================================================================================
 
-namespace ElastoPlasticQPot3d {
+namespace xElastoPlasticQPot3d {
 
 // ------------------------------------------ constructor ------------------------------------------
 
@@ -347,8 +347,6 @@ inline void Matrix::Sig(const xt::xtensor<double,4> &a_Eps, xt::xtensor<double,4
           case Type::Smooth : Sig = m_Smooth [m_index(e,k)].Sig(Eps); break;
           default: std::runtime_error("Unknown material");
         }
-
-        std::cout << Sig << std::endl;
       }
     }
   }

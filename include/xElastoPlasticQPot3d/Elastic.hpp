@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef ELASTOPLASTICQPOT3D_ELASTIC_HPP
-#define ELASTOPLASTICQPOT3D_ELASTIC_HPP
+#ifndef XELASTOPLASTICQPOT3D_ELASTIC_HPP
+#define XELASTOPLASTICQPOT3D_ELASTIC_HPP
 
 // -------------------------------------------------------------------------------------------------
 
@@ -13,7 +13,7 @@
 
 // =================================================================================================
 
-namespace ElastoPlasticQPot3d {
+namespace xElastoPlasticQPot3d {
 
 // ------------------------------------------ constructor ------------------------------------------
 

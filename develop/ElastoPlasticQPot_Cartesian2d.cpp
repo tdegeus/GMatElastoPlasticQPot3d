@@ -3,13 +3,13 @@
 
 #define EQ(a,b) REQUIRE_THAT( (a), Catch::WithinAbs((b), 1.e-12) );
 
-#include "../include/ElastoPlasticQPot3d/ElastoPlasticQPot3d.h"
-#include <ElastoPlasticQPot/ElastoPlasticQPot.h>
+#include "../include/xElastoPlasticQPot3d/ElastoPlasticQPot3d.h"
+#include <xElastoPlasticQPot/ElastoPlasticQPot.h>
 
 #include <xtensor/xrandom.hpp>
 
-namespace GM = ElastoPlasticQPot3d;
-namespace RF = ElastoPlasticQPot::Cartesian2d;
+namespace GM = xElastoPlasticQPot3d;
+namespace RF = xElastoPlasticQPot::Cartesian2d;
 
 // =================================================================================================
 

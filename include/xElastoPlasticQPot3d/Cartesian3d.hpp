@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef ELASTOPLASTICQPOT3D_CARTESIAN3D_HPP
-#define ELASTOPLASTICQPOT3D_CARTESIAN3D_HPP
+#ifndef XELASTOPLASTICQPOT3D_CARTESIAN3D_HPP
+#define XELASTOPLASTICQPOT3D_CARTESIAN3D_HPP
 
 // -------------------------------------------------------------------------------------------------
 
@@ -13,7 +13,7 @@
 
 // =================================================================================================
 
-namespace ElastoPlasticQPot3d {
+namespace xElastoPlasticQPot3d {
 
 // ======================================== TENSOR PRODUCTS ========================================
 

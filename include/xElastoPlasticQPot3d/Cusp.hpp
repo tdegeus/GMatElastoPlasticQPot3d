@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef ELASTOPLASTICQPOT3D_CUSP_HPP
-#define ELASTOPLASTICQPOT3D_CUSP_HPP
+#ifndef XELASTOPLASTICQPOT3D_CUSP_HPP
+#define XELASTOPLASTICQPOT3D_CUSP_HPP
 
 // -------------------------------------------------------------------------------------------------
 
@@ -13,7 +13,7 @@
 
 // =================================================================================================
 
-namespace ElastoPlasticQPot3d {
+namespace xElastoPlasticQPot3d {
 
 // ------------------------------------------ constructor ------------------------------------------
 
@@ -143,17 +143,17 @@ inline size_t Cusp::find(double epsd) const
 inline T2s Cusp::Sig(const T2s &Eps) const
 {
   // decompose strain: hydrostatic part, deviatoric part
-  T2s  I     = xt::eye(ndim);
-  auto treps = trace(Eps);
-  auto Epsd  = Eps - treps/ND * I;
-  auto epsd  = std::sqrt(.5*ddot(Epsd,Epsd));
+  T2s    I     = xt::eye(ndim);
+  double treps = trace(Eps);
+  T2s    Epsd  = Eps - treps/ND * I;
+  double epsd  = std::sqrt(.5*ddot(Epsd,Epsd));
 
   // no deviatoric strain -> only hydrostatic stress
   if ( epsd <= 0. ) return m_kappa * treps * I;
 
   // read current yield strains
-  auto i       = find(epsd);
-  auto eps_min = ( m_epsy[i+1] + m_epsy[i] ) / 2.;
+  size_t i       = find(epsd);
+  double eps_min = ( m_epsy[i+1] + m_epsy[i] ) / 2.;
 
   // return stress tensor
   return m_kappa * treps * I + 2.0 * m_mu * (1.-eps_min/epsd) * Epsd;
@@ -164,21 +164,21 @@ inline T2s Cusp::Sig(const T2s &Eps) const
 inline double Cusp::energy(const T2s &Eps) const
 {
   // decompose strain: hydrostatic part, deviatoric part
-  T2s  I     = xt::eye(ndim);
-  auto treps = trace(Eps);
-  auto Epsd  = Eps - treps/ND * I;
-  auto epsd  = std::sqrt(.5*ddot(Epsd,Epsd));
+  T2s    I     = xt::eye(ndim);
+  double treps = trace(Eps);
+  T2s    Epsd  = Eps - treps/ND * I;
+  double epsd  = std::sqrt(.5*ddot(Epsd,Epsd));
 
   // hydrostatic part of the energy
-  auto U = 0.5 * m_kappa * std::pow(treps,2.);
+  double U = 0.5 * m_kappa * std::pow(treps,2.);
 
   // read current yield strain
-  auto i       = find(epsd);
-  auto eps_min = ( m_epsy[i+1] + m_epsy[i] ) / 2.;
-  auto deps_y  = ( m_epsy[i+1] - m_epsy[i] ) / 2.;
+  size_t i       = find(epsd);
+  double eps_min = ( m_epsy[i+1] + m_epsy[i] ) / 2.;
+  double deps_y  = ( m_epsy[i+1] - m_epsy[i] ) / 2.;
 
   // deviatoric part of the energy
-  auto V = 2.0 * m_mu * ( std::pow(epsd-eps_min,2.) - std::pow(deps_y,2.) );
+  double V = 2.0 * m_mu * ( std::pow(epsd-eps_min,2.) - std::pow(deps_y,2.) );
 
   // return total energy
   return U + V;

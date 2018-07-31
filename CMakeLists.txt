@@ -10,19 +10,19 @@ include(GNUInstallDirs)
 # ----------------
 
 # name
-project(ElastoPlasticQPot3d)
+project(xElastoPlasticQPot3d)
 
 # file that contains the version information
-set(parse_version include/${PROJECT_NAME}/${PROJECT_NAME}.h)
+set(parse_version include/xElastoPlasticQPot3d/ElastoPlasticQPot3d.h)
 
 # header files
 set(headers
-  include/${PROJECT_NAME}/ElastoPlasticQPot3d.h
-  include/${PROJECT_NAME}/Cartesian3d.hpp
-  include/${PROJECT_NAME}/Matrix.hpp
-  include/${PROJECT_NAME}/Elastic.hpp
-  include/${PROJECT_NAME}/Cusp.hpp
-  include/${PROJECT_NAME}/Smooth.hpp
+  include/xElastoPlasticQPot3d/ElastoPlasticQPot3d.h
+  include/xElastoPlasticQPot3d/Cartesian3d.hpp
+  include/xElastoPlasticQPot3d/Matrix.hpp
+  include/xElastoPlasticQPot3d/Elastic.hpp
+  include/xElastoPlasticQPot3d/Cusp.hpp
+  include/xElastoPlasticQPot3d/Smooth.hpp
 )
 
 # automatically parse the version number
@@ -43,8 +43,8 @@ set(ELASTOPLASTICQPOT3D_INCLUDE_DIR "${CMAKE_INSTALL_INCLUDEDIR}")
 set(INCLUDE_INSTALL_DIR           "${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}")
 set(CMAKEPACKAGE_INSTALL_DIR      "${CMAKE_INSTALL_DATADIR}/${PROJECT_NAME}")
 set(PKGCONFIG_INSTALL_DIR         "${CMAKE_INSTALL_DATADIR}/pkgconfig")
-set(fcmake                        "${PROJECT_NAME}Config.cmake")
-set(fpkg                          "${PROJECT_NAME}.pc")
+set(fcmake                        "ElastoPlasticQPot3dConfig.cmake")
+set(fpkg                          "ElastoPlasticQPot3d.pc")
 
 # options
 # -------
@@ -70,8 +70,8 @@ endif()
 # ---------------
 
 configure_package_config_file(
-  ${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake
+  ${CMAKE_CURRENT_SOURCE_DIR}/ElastoPlasticQPot3dConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/ElastoPlasticQPot3dConfig.cmake
   PATH_VARS ELASTOPLASTICQPOT3D_INCLUDE_DIR ELASTOPLASTICQPOT3D_ROOT_DIR
   INSTALL_DESTINATION ${CMAKEPACKAGE_INSTALL_DIR}
   NO_CHECK_REQUIRED_COMPONENTS_MACRO
