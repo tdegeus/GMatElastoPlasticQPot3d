@@ -69,8 +69,8 @@ inline double Cusp::mu() const
 
 inline double Cusp::epsd(const T2s &Eps) const
 {
-  T2s  I    = xt::eye(ndim);
-  auto Epsd = Eps - trace(Eps)/ND * I;
+  T2s  I    = xt::eye(3);
+  auto Epsd = Eps - trace(Eps)/3. * I;
 
   return std::sqrt(.5*ddot(Epsd,Epsd));
 }
@@ -143,9 +143,9 @@ inline size_t Cusp::find(double epsd) const
 inline T2s Cusp::Sig(const T2s &Eps) const
 {
   // decompose strain: hydrostatic part, deviatoric part
-  T2s    I     = xt::eye(ndim);
+  T2s    I     = xt::eye(3);
   double treps = trace(Eps);
-  T2s    Epsd  = Eps - treps/ND * I;
+  T2s    Epsd  = Eps - treps/3. * I;
   double epsd  = std::sqrt(.5*ddot(Epsd,Epsd));
 
   // no deviatoric strain -> only hydrostatic stress
@@ -164,9 +164,9 @@ inline T2s Cusp::Sig(const T2s &Eps) const
 inline double Cusp::energy(const T2s &Eps) const
 {
   // decompose strain: hydrostatic part, deviatoric part
-  T2s    I     = xt::eye(ndim);
+  T2s    I     = xt::eye(3);
   double treps = trace(Eps);
-  T2s    Epsd  = Eps - treps/ND * I;
+  T2s    Epsd  = Eps - treps/3. * I;
   double epsd  = std::sqrt(.5*ddot(Epsd,Epsd));
 
   // hydrostatic part of the energy

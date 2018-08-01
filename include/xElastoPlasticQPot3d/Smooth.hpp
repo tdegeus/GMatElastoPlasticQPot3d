@@ -69,8 +69,8 @@ inline double Smooth::mu() const
 
 inline double Smooth::epsd(const T2s &Eps) const
 {
-  T2s  I    = xt::eye(ndim);
-  auto Epsd = Eps - trace(Eps)/ND * I;
+  T2s  I    = xt::eye(3);
+  auto Epsd = Eps - trace(Eps)/3. * I;
 
   return std::sqrt(.5*ddot(Epsd,Epsd));
 }
@@ -143,9 +143,9 @@ inline size_t Smooth::find(double epsd) const
 inline T2s Smooth::Sig(const T2s &Eps) const
 {
   // decompose strain: hydrostatic part, deviatoric part
-  T2s  I     = xt::eye(ndim);
+  T2s  I     = xt::eye(3);
   auto treps = trace(Eps);
-  auto Epsd  = Eps - treps/ND * I;
+  auto Epsd  = Eps - treps/3. * I;
   auto epsd  = std::sqrt(.5*ddot(Epsd,Epsd));
 
   // no deviatoric strain -> only hydrostatic stress
@@ -165,9 +165,9 @@ inline T2s Smooth::Sig(const T2s &Eps) const
 inline double Smooth::energy(const T2s &Eps) const
 {
   // decompose strain: hydrostatic part, deviatoric part
-  T2s  I     = xt::eye(ndim);
+  T2s  I     = xt::eye(3);
   auto treps = trace(Eps);
-  auto Epsd  = Eps - treps/ND * I;
+  auto Epsd  = Eps - treps/3. * I;
   auto epsd  = std::sqrt(.5*ddot(Epsd,Epsd));
 
   // hydrostatic part of the energy

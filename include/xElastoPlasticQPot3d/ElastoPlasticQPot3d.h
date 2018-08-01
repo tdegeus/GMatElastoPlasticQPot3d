@@ -49,10 +49,7 @@ namespace xElastoPlasticQPot3d {
 
 // --------------------------------------------- alias ---------------------------------------------
 
-static const size_t ndim = 3;
-static const double ND   = 3.;
-
-using T2s = xt::xtensor_fixed<double, xt::xshape<ndim,ndim>>;
+using T2s = xt::xtensor_fixed<double, xt::xshape<3,3>>;
 
 // ---------------------------------------- tensor algebra -----------------------------------------
 

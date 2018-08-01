@@ -30,7 +30,7 @@ SECTION( "Elastic" )
 
   // initialize strain
   // - random strain
-  GM::T2s Eps_GM = xt::random::rand<double>({GM::ndim, GM::ndim});
+  GM::T2s Eps_GM = xt::random::rand<double>({3, 3});
   // - make symmetric
   Eps_GM(1,0) = Eps_GM(0,1);
   Eps_GM(2,0) = Eps_GM(0,2);
@@ -86,7 +86,7 @@ SECTION( "Cusp" )
 
   // initialize strain
   // - random strain
-  GM::T2s Eps_GM = xt::random::rand<double>({GM::ndim, GM::ndim});
+  GM::T2s Eps_GM = xt::random::rand<double>({3, 3});
   // - make symmetric
   Eps_GM(1,0) = Eps_GM(0,1);
   Eps_GM(2,0) = Eps_GM(0,2);
@@ -142,7 +142,7 @@ SECTION( "Smooth" )
 
   // initialize strain
   // - random strain
-  GM::T2s Eps_GM = xt::random::rand<double>({GM::ndim, GM::ndim});
+  GM::T2s Eps_GM = xt::random::rand<double>({3, 3});
   // - make symmetric
   Eps_GM(1,0) = Eps_GM(0,1);
   Eps_GM(2,0) = Eps_GM(0,2);
@@ -257,13 +257,13 @@ SECTION( "Matrix" )
 
   // initialize strain
   // - allocate
-  xt::xtensor<double,4> eps_GM = xt::zeros<double>({std::size_t(3),std::size_t(2),GM::ndim,GM::ndim});
-  xt::xtensor<double,4> eps_RF = xt::zeros<double>({std::size_t(3),std::size_t(2),RF::ndim,RF::ndim});
+  xt::xtensor<double,4> eps_GM = xt::zeros<double>({3,2,3,3});
+  xt::xtensor<double,4> eps_RF = xt::zeros<double>({3,2,2,2});
   // - fill
   for ( size_t e = 0 ; e < 3 ; ++e ) {
     for ( size_t k = 0 ; k < 2 ; ++k ) {
       // -- random strain
-      GM::T2s tmp = xt::random::rand<double>({GM::ndim, GM::ndim});
+      GM::T2s tmp = xt::random::rand<double>({3, 3});
       // -- store set epsxy
       eps_GM(e,k,0,1) = tmp(0,1);
       eps_GM(e,k,1,0) = tmp(0,1);
