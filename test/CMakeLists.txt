@@ -39,5 +39,6 @@ endif()
 
 add_executable(${PROJECT_NAME}
   main.cpp
-  ElastoPlasticQPot_Cartesian2d.cpp
+  Cartesian3d.cpp
+  GMatElastoPlasticQPot_Cartesian2d.cpp
 )

@@ -1,19 +1,19 @@
 /* =================================================================================================
 
-(c - MIT) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/ElastoPlasticQPot3d
+(c - MIT) T.W.J. de Geus (Tom) | www.geus.me | github.com/tdegeus/GMatElastoPlasticQPot3d
 
 ================================================================================================= */
 
-#ifndef XELASTOPLASTICQPOT3D_CARTESIAN3D_MATRIX_HPP
-#define XELASTOPLASTICQPOT3D_CARTESIAN3D_MATRIX_HPP
+#ifndef XGMATELASTOPLASTICQPOT3D_CARTESIAN3D_MATRIX_HPP
+#define XGMATELASTOPLASTICQPOT3D_CARTESIAN3D_MATRIX_HPP
 
 // -------------------------------------------------------------------------------------------------
 
-#include "ElastoPlasticQPot3d.h"
+#include "GMatElastoPlasticQPot3d.h"
 
 // =================================================================================================
 
-namespace xElastoPlasticQPot3d {
+namespace GMatElastoPlasticQPot3d {
 namespace Cartesian3d {
 
 // -------------------------------------------------------------------------------------------------

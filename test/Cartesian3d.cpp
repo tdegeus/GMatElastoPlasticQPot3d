@@ -1,16 +1,15 @@
 
-#define CATCH_CONFIG_MAIN  // tells Catch to provide a main() - only do this in one cpp file
 #include <catch2/catch.hpp>
 
 #define EQ(a,b) REQUIRE_THAT( (a), Catch::WithinAbs((b), 1.e-12) );
 
-#include "../include/xElastoPlasticQPot3d/ElastoPlasticQPot3d.h"
+#include "../include/GMatElastoPlasticQPot3d/GMatElastoPlasticQPot3d.h"
 
-namespace GM = xElastoPlasticQPot3d;
+namespace GM = GMatElastoPlasticQPot3d::Cartesian3d;
 
 // =================================================================================================
 
-TEST_CASE("ElastoPlasticQPot3d", "ElastoPlasticQPot3d")
+TEST_CASE("GMatElastoPlasticQPot3d::Cartesian3d", "Cartesian3d.h")
 {
 
 // =================================================================================================
@@ -137,43 +136,45 @@ SECTION( "Matrix" )
   // parameters
   double kappa = 12.3;
   double mu    = 45.6;
+  size_t nelem = 3;
+  size_t nip   = 2;
 
   // allocate matrix
   GM::Matrix mat({3,2});
 
   // row 0: elastic
   {
-    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>({nelem,nip});
 
-    for ( size_t k = 0 ; k < mat.shape(1) ; ++k ) I(0,k) = 1;
+    for ( size_t q = 0 ; q < nip ; ++q ) I(0,q) = 1;
 
     mat.setElastic(I,kappa,mu);
   }
 
   // row 1: cups
   {
-    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>({nelem,nip});
 
-    std::vector<double> epsy = {0.01, 0.03, 0.10};
+    xt::xtensor<double,1> epsy = {0.01, 0.03, 0.10};
 
-    for ( size_t k = 0 ; k < mat.shape(1) ; ++k ) I(1,k) = 1;
+    for ( size_t q = 0 ; q < nip ; ++q ) I(1,q) = 1;
 
     mat.setCusp(I,kappa,mu,epsy);
   }
 
   // row 2: smooth
   {
-    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>({nelem,nip});
 
-    std::vector<double> epsy = {0.01, 0.03, 0.10};
+    xt::xtensor<double,1> epsy = {0.01, 0.03, 0.10};
 
-    for ( size_t k = 0 ; k < mat.shape(1) ; ++k ) I(2,k) = 1;
+    for ( size_t q = 0 ; q < nip ; ++q ) I(2,q) = 1;
 
     mat.setCusp(I,kappa,mu,epsy);
   }
 
   // allocate tensors
-  GM::T2s Eps, Sig;
+  GM::T2s Eps;
 
   // simple shear + volumetric deformation
   // - parameters
@@ -187,9 +188,9 @@ SECTION( "Matrix" )
   xt::xtensor<double,4> sig;
   xt::xtensor<double,2> epsp;
   // - set strain
-  for ( size_t e = 0 ; e < 3 ; ++e ) {
-    for ( size_t k = 0 ; k < 2 ; ++k ) {
-      auto eps_i = xt::view(eps, e, k, xt::all(), xt::all());
+  for ( size_t e = 0 ; e < nelem ; ++e ) {
+    for ( size_t q = 0 ; q < nip ; ++q ) {
+      auto eps_i = xt::view(eps, e, q);
       eps_i = Eps;
     }
   }

@@ -3,17 +3,17 @@
 
 #define EQ(a,b) REQUIRE_THAT( (a), Catch::WithinAbs((b), 1.e-12) );
 
-#include "../include/xElastoPlasticQPot3d/ElastoPlasticQPot3d.h"
-#include <xElastoPlasticQPot/ElastoPlasticQPot.h>
+#include "../include/GMatElastoPlasticQPot3d/GMatElastoPlasticQPot3d.h"
+#include <GMatElastoPlasticQPot/GMatElastoPlasticQPot.h>
 
 #include <xtensor/xrandom.hpp>
 
-namespace GM = xElastoPlasticQPot3d;
-namespace RF = xElastoPlasticQPot::Cartesian2d;
+namespace GM = GMatElastoPlasticQPot3d::Cartesian3d;
+namespace RF = GMatElastoPlasticQPot::Cartesian2d;
 
 // =================================================================================================
 
-TEST_CASE("ElastoPlasticQPot_Cartesian2d", "ElastoPlasticQPot_Cartesian2d")
+TEST_CASE("GMatElastoPlasticQPot_Cartesian2d", "GMatElastoPlasticQPot_Cartesian2d")
 {
 
 // =================================================================================================
@@ -198,59 +198,59 @@ SECTION( "Matrix" )
 
   // row 0: elastic
   {
-    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat_GM.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>({mat_GM.nelem(), mat_GM.nip()});
 
-    for ( size_t k = 0 ; k < mat_GM.shape(1) ; ++k ) I(0,k) = 1;
+    for ( size_t q = 0 ; q < mat_GM.nip() ; ++q ) I(0,q) = 1;
 
     mat_GM.setElastic(I,kappa,mu);
   }
   // row 0: elastic
   {
-    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat_RF.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>({mat_RF.nelem(), mat_RF.nip()});
 
-    for ( size_t k = 0 ; k < mat_RF.shape(1) ; ++k ) I(0,k) = 1;
+    for ( size_t q = 0 ; q < mat_RF.nip() ; ++q ) I(0,q) = 1;
 
     mat_RF.setElastic(I,3.*kappa,2.*mu);
   }
 
   // row 1: cups
   {
-    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat_GM.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>({mat_GM.nelem(), mat_GM.nip()});
 
-    std::vector<double> epsy = {0.01, 0.2, 2.0};
+    xt::xtensor<double,1> epsy = {0.01, 0.2, 2.0};
 
-    for ( size_t k = 0 ; k < mat_GM.shape(1) ; ++k ) I(1,k) = 1;
+    for ( size_t q = 0 ; q < mat_GM.nip() ; ++q ) I(1,q) = 1;
 
     mat_GM.setCusp(I,kappa,mu,epsy);
   }
   // row 1: cups
   {
-    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat_RF.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>({mat_RF.nelem(), mat_RF.nip()});
 
-    std::vector<double> epsy = {0.01, 0.2, 2.0};
+    xt::xtensor<double,1> epsy = {0.01, 0.2, 2.0};
 
-    for ( size_t k = 0 ; k < mat_RF.shape(1) ; ++k ) I(1,k) = 1;
+    for ( size_t q = 0 ; q < mat_RF.nip() ; ++q ) I(1,q) = 1;
 
     mat_RF.setCusp(I,3.*kappa,2.*mu,epsy);
   }
 
   // row 2: smooth
   {
-    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat_GM.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>({mat_GM.nelem(), mat_GM.nip()});
 
-    std::vector<double> epsy = {0.01, 0.2, 2.0};
+    xt::xtensor<double,1> epsy = {0.01, 0.2, 2.0};
 
-    for ( size_t k = 0 ; k < mat_GM.shape(1) ; ++k ) I(2,k) = 1;
+    for ( size_t q = 0 ; q < mat_GM.nip() ; ++q ) I(2,q) = 1;
 
     mat_GM.setCusp(I,kappa,mu,epsy);
   }
   // row 2: smooth
   {
-    xt::xtensor<size_t,2> I = xt::zeros<size_t>(mat_RF.shape());
+    xt::xtensor<size_t,2> I = xt::zeros<size_t>({mat_RF.nelem(), mat_RF.nip()});
 
-    std::vector<double> epsy = {0.01, 0.2, 2.0};
+    xt::xtensor<double,1> epsy = {0.01, 0.2, 2.0};
 
-    for ( size_t k = 0 ; k < mat_RF.shape(1) ; ++k ) I(2,k) = 1;
+    for ( size_t q = 0 ; q < mat_RF.nip() ; ++q ) I(2,q) = 1;
 
     mat_RF.setCusp(I,3.*kappa,2.*mu,epsy);
   }
@@ -261,20 +261,20 @@ SECTION( "Matrix" )
   xt::xtensor<double,4> eps_RF = xt::zeros<double>({3,2,2,2});
   // - fill
   for ( size_t e = 0 ; e < 3 ; ++e ) {
-    for ( size_t k = 0 ; k < 2 ; ++k ) {
+    for ( size_t q = 0 ; q < 2 ; ++q ) {
       // -- random strain
       GM::T2s tmp = xt::random::rand<double>({3, 3});
       // -- store set epsxy
-      eps_GM(e,k,0,1) = tmp(0,1);
-      eps_GM(e,k,1,0) = tmp(0,1);
-      eps_RF(e,k,0,1) = tmp(0,1);
-      eps_RF(e,k,1,0) = tmp(0,1);
+      eps_GM(e,q,0,1) = tmp(0,1);
+      eps_GM(e,q,1,0) = tmp(0,1);
+      eps_RF(e,q,0,1) = tmp(0,1);
+      eps_RF(e,q,1,0) = tmp(0,1);
       // -- store set epsxx
-      eps_GM(e,k,0,0) = tmp(1,1);
-      eps_RF(e,k,0,0) = tmp(1,1);
+      eps_GM(e,q,0,0) = tmp(1,1);
+      eps_RF(e,q,0,0) = tmp(1,1);
       // -- store set epsxx
-      eps_GM(e,k,1,1) = -tmp(1,1);
-      eps_RF(e,k,1,1) = -tmp(1,1);
+      eps_GM(e,q,1,1) = -tmp(1,1);
+      eps_RF(e,q,1,1) = -tmp(1,1);
     }
   }
 
@@ -286,17 +286,17 @@ SECTION( "Matrix" )
 
   // - check
   for ( size_t e = 0 ; e < 3 ; ++e ) {
-    for ( size_t k = 0 ; k < 2 ; ++k ) {
-      EQ( sig_GM (e,k,0,0), sig_RF (e,k,0,0) );
-      EQ( sig_GM (e,k,0,1), sig_RF (e,k,0,1) );
-      EQ( sig_GM (e,k,1,0), sig_RF (e,k,1,0) );
-      EQ( sig_GM (e,k,1,1), sig_RF (e,k,1,1) );
-      EQ( epsp_GM(e,k)    , epsp_RF(e,k)     );
-      EQ( sig_GM (e,k,0,2), 0.               );
-      EQ( sig_GM (e,k,2,0), 0.               );
-      EQ( sig_GM (e,k,1,2), 0.               );
-      EQ( sig_GM (e,k,2,1), 0.               );
-      EQ( sig_GM (e,k,2,2), 0.               );
+    for ( size_t q = 0 ; q < 2 ; ++q ) {
+      EQ( sig_GM (e,q,0,0), sig_RF (e,q,0,0) );
+      EQ( sig_GM (e,q,0,1), sig_RF (e,q,0,1) );
+      EQ( sig_GM (e,q,1,0), sig_RF (e,q,1,0) );
+      EQ( sig_GM (e,q,1,1), sig_RF (e,q,1,1) );
+      EQ( epsp_GM(e,q)    , epsp_RF(e,q)     );
+      EQ( sig_GM (e,q,0,2), 0.               );
+      EQ( sig_GM (e,q,2,0), 0.               );
+      EQ( sig_GM (e,q,1,2), 0.               );
+      EQ( sig_GM (e,q,2,1), 0.               );
+      EQ( sig_GM (e,q,2,2), 0.               );
     }
   }
 }

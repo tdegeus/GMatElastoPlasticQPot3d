@@ -1,11 +1,11 @@
 /* =================================================================================================
 
-(c - MIT) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/ElastoPlasticQPot3d
+(c - MIT) T.W.J. de Geus (Tom) | www.geus.me | github.com/tdegeus/GMatElastoPlasticQPot3d
 
 ================================================================================================= */
 
-#ifndef XELASTOPLASTICQPOT3D_H
-#define XELASTOPLASTICQPOT3D_H
+#ifndef XGMATELASTOPLASTICQPOT3D_H
+#define XGMATELASTOPLASTICQPOT3D_H
 
 // -------------------------------------------------------------------------------------------------
 
@@ -36,19 +36,19 @@
 
 // -------------------------------------------------------------------------------------------------
 
-#define ELASTOPLASTICQPOT3D_WORLD_VERSION 0
-#define ELASTOPLASTICQPOT3D_MAJOR_VERSION 0
-#define ELASTOPLASTICQPOT3D_MINOR_VERSION 3
+#define GMATELASTOPLASTICQPOT3D_WORLD_VERSION 0
+#define GMATELASTOPLASTICQPOT3D_MAJOR_VERSION 0
+#define GMATELASTOPLASTICQPOT3D_MINOR_VERSION 3
 
-#define ELASTOPLASTICQPOT3D_VERSION_AT_LEAST(x,y,z) \
-  (ELASTOPLASTICQPOT3D_WORLD_VERSION>x || (ELASTOPLASTICQPOT3D_WORLD_VERSION>=x && \
-  (ELASTOPLASTICQPOT3D_MAJOR_VERSION>y || (ELASTOPLASTICQPOT3D_MAJOR_VERSION>=y && \
-                                           ELASTOPLASTICQPOT3D_MINOR_VERSION>=z))))
+#define GMATELASTOPLASTICQPOT3D_VERSION_AT_LEAST(x,y,z) \
+  (GMATELASTOPLASTICQPOT3D_WORLD_VERSION>x || (GMATELASTOPLASTICQPOT3D_WORLD_VERSION>=x && \
+  (GMATELASTOPLASTICQPOT3D_MAJOR_VERSION>y || (GMATELASTOPLASTICQPOT3D_MAJOR_VERSION>=y && \
+                                               GMATELASTOPLASTICQPOT3D_MINOR_VERSION>=z))))
 
-#define ELASTOPLASTICQPOT3D_VERSION(x,y,z) \
-  (ELASTOPLASTICQPOT3D_WORLD_VERSION==x && \
-   ELASTOPLASTICQPOT3D_MAJOR_VERSION==y && \
-   ELASTOPLASTICQPOT3D_MINOR_VERSION==z)
+#define GMATELASTOPLASTICQPOT3D_VERSION(x,y,z) \
+  (GMATELASTOPLASTICQPOT3D_WORLD_VERSION==x && \
+   GMATELASTOPLASTICQPOT3D_MAJOR_VERSION==y && \
+   GMATELASTOPLASTICQPOT3D_MINOR_VERSION==z)
 
 // -------------------------------------------------------------------------------------------------
 
