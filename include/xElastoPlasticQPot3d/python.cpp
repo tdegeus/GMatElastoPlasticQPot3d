@@ -1,12 +1,11 @@
 /* =================================================================================================
 
-(c - GPLv3) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/GooseFEM
+(c - MIT) T.W.J. de Geus (Tom) | tom@geus.me | www.geus.me | github.com/tdegeus/ElastoPlasticQPot3d
 
 ================================================================================================= */
 
 #include <pybind11/pybind11.h>
 #include <pyxtensor/pyxtensor.hpp>
-// #include <xtensor-python/pytensor.hpp>
 
 #include "ElastoPlasticQPot3d.h"
 
@@ -14,10 +13,6 @@
 
 // abbreviate name-space
 namespace py = pybind11;
-namespace M  = ElastoPlasticQPot3d;
-
-// abbreviate types(s)
-typedef M::T2s T2s;
 
 // ====================================== ElastoPlasticQPot3d ======================================
 
@@ -25,27 +20,40 @@ PYBIND11_MODULE(ElastoPlasticQPot3d, m) {
 
 m.doc() = "Elasto-plastic material models";
 
-// -------------------------------------------------------------------------------------------------
+// =============================== ElastoPlasticQPot3d::Cartesian3d ================================
 
-m.def("epsm", py::overload_cast<const T2s & >(&M::epsm), "Hydrostatic strain" , py::arg("Eps"));
-m.def("epsd", py::overload_cast<const T2s & >(&M::epsd), "Eq. strain deviator", py::arg("Eps"));
-m.def("Epsd", py::overload_cast<const T2s & >(&M::Epsd), "Strain deviator"    , py::arg("Eps"));
+{
 
-m.def("sigm", py::overload_cast<const T2s & >(&M::sigm), "Hydrostatic stress" , py::arg("Sig"));
-m.def("sigd", py::overload_cast<const T2s & >(&M::sigd), "Eq. stress deviator", py::arg("Sig"));
-m.def("Sigd", py::overload_cast<const T2s & >(&M::Sigd), "Stress deviator"    , py::arg("Sig"));
+// create submodule
+py::module sm = m.def_submodule("Cartesian3d", "3d Cartesian coordinates");
 
-m.def("epsm", py::overload_cast<const xt::xtensor<double,4> &>(&M::epsm), "Hydrostatic strain" , py::arg("a_Eps"));
-m.def("epsd", py::overload_cast<const xt::xtensor<double,4> &>(&M::epsd), "Eq. strain deviator", py::arg("a_Eps"));
-m.def("Epsd", py::overload_cast<const xt::xtensor<double,4> &>(&M::Epsd), "Strain deviator"    , py::arg("a_Eps"));
+// abbreviate name-space
+namespace SM = xElastoPlasticQPot3d::Cartesian3d;
 
-m.def("sigm", py::overload_cast<const xt::xtensor<double,4> &>(&M::sigm), "Hydrostatic stress" , py::arg("a_Sig"));
-m.def("sigd", py::overload_cast<const xt::xtensor<double,4> &>(&M::sigd), "Eq. stress deviator", py::arg("a_Sig"));
-m.def("Sigd", py::overload_cast<const xt::xtensor<double,4> &>(&M::Sigd), "Stress deviator"    , py::arg("a_Sig"));
+// abbreviate types(s)
+typedef SM::T2s T2s;
 
 // -------------------------------------------------------------------------------------------------
 
-py::class_<M::Elastic>(m, "Elastic")
+sm.def("epsm", py::overload_cast<const T2s &>(&SM::epsm), "Hydrostatic strain" , py::arg("Eps"));
+sm.def("epsd", py::overload_cast<const T2s &>(&SM::epsd), "Eq. strain deviator", py::arg("Eps"));
+sm.def("Epsd", py::overload_cast<const T2s &>(&SM::Epsd), "Strain deviator"    , py::arg("Eps"));
+
+sm.def("sigm", py::overload_cast<const T2s &>(&SM::sigm), "Hydrostatic stress" , py::arg("Sig"));
+sm.def("sigd", py::overload_cast<const T2s &>(&SM::sigd), "Eq. stress deviator", py::arg("Sig"));
+sm.def("Sigd", py::overload_cast<const T2s &>(&SM::Sigd), "Stress deviator"    , py::arg("Sig"));
+
+sm.def("epsm", py::overload_cast<const xt::xtensor<double,4> &>(&SM::epsm), "Hydrostatic strain" , py::arg("a_Eps"));
+sm.def("epsd", py::overload_cast<const xt::xtensor<double,4> &>(&SM::epsd), "Eq. strain deviator", py::arg("a_Eps"));
+sm.def("Epsd", py::overload_cast<const xt::xtensor<double,4> &>(&SM::Epsd), "Strain deviator"    , py::arg("a_Eps"));
+
+sm.def("sigm", py::overload_cast<const xt::xtensor<double,4> &>(&SM::sigm), "Hydrostatic stress" , py::arg("a_Sig"));
+sm.def("sigd", py::overload_cast<const xt::xtensor<double,4> &>(&SM::sigd), "Eq. stress deviator", py::arg("a_Sig"));
+sm.def("Sigd", py::overload_cast<const xt::xtensor<double,4> &>(&SM::Sigd), "Stress deviator"    , py::arg("a_Sig"));
+
+// -------------------------------------------------------------------------------------------------
+
+py::class_<SM::Elastic>(sm, "Elastic")
   // constructor
   .def(
     py::init<double,double>(),
@@ -54,23 +62,23 @@ py::class_<M::Elastic>(m, "Elastic")
     py::arg("mu")
   )
   // methods
-  .def("Sig"   , &M::Elastic::Sig   , py::arg("Eps"))
-  .def("energy", &M::Elastic::energy, py::arg("Eps"))
-  .def("epsy"  , &M::Elastic::epsy  , py::arg("idx"))
-  .def("epsp"  , py::overload_cast<const T2s &>(&M::Elastic::epsp, py::const_), py::arg("Eps" ))
-  .def("epsp"  , py::overload_cast<double     >(&M::Elastic::epsp, py::const_), py::arg("epsd"))
-  .def("find"  , py::overload_cast<const T2s &>(&M::Elastic::find, py::const_), py::arg("Eps" ))
-  .def("find"  , py::overload_cast<double     >(&M::Elastic::find, py::const_), py::arg("epsd"))
+  .def("Sig"   , &SM::Elastic::Sig   , py::arg("Eps"))
+  .def("energy", &SM::Elastic::energy, py::arg("Eps"))
+  .def("epsy"  , &SM::Elastic::epsy  , py::arg("idx"))
+  .def("epsp"  , py::overload_cast<const T2s &>(&SM::Elastic::epsp, py::const_), py::arg("Eps" ))
+  .def("epsp"  , py::overload_cast<double     >(&SM::Elastic::epsp, py::const_), py::arg("epsd"))
+  .def("find"  , py::overload_cast<const T2s &>(&SM::Elastic::find, py::const_), py::arg("Eps" ))
+  .def("find"  , py::overload_cast<double     >(&SM::Elastic::find, py::const_), py::arg("epsd"))
   // print to screen
-  .def("__repr__", [](const M::Elastic &){
-    return "<ElastoPlasticQPot3d.Elastic>"; });
+  .def("__repr__", [](const SM::Elastic &){
+    return "<ElastoPlasticQPot3d.Cartesian3d.Elastic>"; });
 
 // -------------------------------------------------------------------------------------------------
 
-py::class_<M::Cusp>(m, "Cusp")
+py::class_<SM::Cusp>(sm, "Cusp")
   // constructor
   .def(
-    py::init<double,double,const std::vector<double>&, bool>(),
+    py::init<double,double,const xt::xtensor<double,1>&, bool>(),
     "Cusp material",
     py::arg("kappa"),
     py::arg("mu"),
@@ -78,23 +86,23 @@ py::class_<M::Cusp>(m, "Cusp")
     py::arg("init_elastic")=true
   )
   // methods
-  .def("Sig"   , &M::Cusp::Sig   , py::arg("Eps"))
-  .def("energy", &M::Cusp::energy, py::arg("Eps"))
-  .def("epsy"  , &M::Cusp::epsy  , py::arg("idx"))
-  .def("epsp"  , py::overload_cast<const T2s &>(&M::Cusp::epsp, py::const_), py::arg("Eps" ))
-  .def("epsp"  , py::overload_cast<double     >(&M::Cusp::epsp, py::const_), py::arg("epsd"))
-  .def("find"  , py::overload_cast<const T2s &>(&M::Cusp::find, py::const_), py::arg("Eps" ))
-  .def("find"  , py::overload_cast<double     >(&M::Cusp::find, py::const_), py::arg("epsd"))
+  .def("Sig"   , &SM::Cusp::Sig   , py::arg("Eps"))
+  .def("energy", &SM::Cusp::energy, py::arg("Eps"))
+  .def("epsy"  , &SM::Cusp::epsy  , py::arg("idx"))
+  .def("epsp"  , py::overload_cast<const T2s &>(&SM::Cusp::epsp, py::const_), py::arg("Eps" ))
+  .def("epsp"  , py::overload_cast<double     >(&SM::Cusp::epsp, py::const_), py::arg("epsd"))
+  .def("find"  , py::overload_cast<const T2s &>(&SM::Cusp::find, py::const_), py::arg("Eps" ))
+  .def("find"  , py::overload_cast<double     >(&SM::Cusp::find, py::const_), py::arg("epsd"))
   // print to screen
-  .def("__repr__", [](const M::Cusp &){
-    return "<ElastoPlasticQPot3d.Cusp>"; });
+  .def("__repr__", [](const SM::Cusp &){
+    return "<ElastoPlasticQPot3d.Cartesian3d.Cusp>"; });
 
 // -------------------------------------------------------------------------------------------------
 
 py::class_<M::Smooth>(m, "Smooth")
   // constructor
   .def(
-    py::init<double,double,const std::vector<double>&, bool>(),
+    py::init<double,double,const xt::xtensor<double,1>&, bool>(),
     "Smooth material",
     py::arg("kappa"),
     py::arg("mu"),
@@ -102,59 +110,64 @@ py::class_<M::Smooth>(m, "Smooth")
     py::arg("init_elastic")=true
   )
   // methods
-  .def("Sig"   , &M::Smooth::Sig   , py::arg("Eps"))
-  .def("energy", &M::Smooth::energy, py::arg("Eps"))
-  .def("epsy"  , &M::Smooth::epsy  , py::arg("idx"))
-  .def("epsp"  , py::overload_cast<const T2s &>(&M::Smooth::epsp, py::const_), py::arg("Eps" ))
-  .def("epsp"  , py::overload_cast<double     >(&M::Smooth::epsp, py::const_), py::arg("epsd"))
-  .def("find"  , py::overload_cast<const T2s &>(&M::Smooth::find, py::const_), py::arg("Eps" ))
-  .def("find"  , py::overload_cast<double     >(&M::Smooth::find, py::const_), py::arg("epsd"))
+  .def("Sig"   , &SM::Smooth::Sig   , py::arg("Eps"))
+  .def("energy", &SM::Smooth::energy, py::arg("Eps"))
+  .def("epsy"  , &SM::Smooth::epsy  , py::arg("idx"))
+  .def("epsp"  , py::overload_cast<const T2s &>(&SM::Smooth::epsp, py::const_), py::arg("Eps" ))
+  .def("epsp"  , py::overload_cast<double     >(&SM::Smooth::epsp, py::const_), py::arg("epsd"))
+  .def("find"  , py::overload_cast<const T2s &>(&SM::Smooth::find, py::const_), py::arg("Eps" ))
+  .def("find"  , py::overload_cast<double     >(&SM::Smooth::find, py::const_), py::arg("epsd"))
   // print to screen
-  .def("__repr__", [](const M::Smooth &){
-    return "<ElastoPlasticQPot3d.Smooth>"; });
+  .def("__repr__", [](const SM::Smooth &){
+    return "<ElastoPlasticQPot3d.Cartesian3d.Smooth>"; });
 
 // -------------------------------------------------------------------------------------------------
 
-py::module smm = m.def_submodule("Type", "Type enumerator");
+py::module smm = sm.def_submodule("Type", "Type enumerator");
 
-py::enum_<M::Type::Value>(smm, "Type")
-    .value("Unset"       , M::Type::Unset)
-    .value("Elastic"     , M::Type::Elastic)
-    .value("Cusp"        , M::Type::Cusp)
-    .value("Smooth"      , M::Type::Smooth)
-    .value("PlanarCusp"  , M::Type::PlanarCusp)
-    .value("PlanarSmooth", M::Type::PlanarSmooth)
+py::enum_<SM::Type::Value>(smm, "Type")
+    .value("Unset"       , SM::Type::Unset)
+    .value("Elastic"     , SM::Type::Elastic)
+    .value("Cusp"        , SM::Type::Cusp)
+    .value("Smooth"      , SM::Type::Smooth)
+    .value("PlanarCusp"  , SM::Type::PlanarCusp)
+    .value("PlanarSmooth", SM::Type::PlanarSmooth)
     .export_values();
 
 // -------------------------------------------------------------------------------------------------
 
-py::class_<M::Matrix>(m, "Matrix")
+py::class_<SM::Matrix>(sm, "Matrix")
   // constructor
   .def(
-    py::init<const std::vector<size_t>&>(),
+    py::init<size_t, size_t>(),
     "Matrix of materials",
-    py::arg("shape")
+    py::arg("nelem"),
+    py::arg("nip")
   )
   // methods
-  .def("setElastic", py::overload_cast<const xt::xtensor<size_t,2> &,                                double,                        double                                                            >(&M::Matrix::setElastic),py::arg("I"),               py::arg("kappa"),py::arg("mu"))
-  .def("setCusp"   , py::overload_cast<const xt::xtensor<size_t,2> &,                                double,                        double,                        const std::vector<double>   &, bool>(&M::Matrix::setCusp   ),py::arg("I"),               py::arg("kappa"),py::arg("mu"),py::arg("epsy"),py::arg("init_elastic")=true)
-  .def("setSmooth" , py::overload_cast<const xt::xtensor<size_t,2> &,                                double,                        double,                        const std::vector<double>   &, bool>(&M::Matrix::setSmooth ),py::arg("I"),               py::arg("kappa"),py::arg("mu"),py::arg("epsy"),py::arg("init_elastic")=true)
-  .def("setElastic", py::overload_cast<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &, const xt::xtensor<double,1> &, const xt::xtensor<double,1> &                                     >(&M::Matrix::setElastic),py::arg("I"),py::arg("idx"),py::arg("kappa"),py::arg("mu"))
-  .def("setCusp"   , py::overload_cast<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &, const xt::xtensor<double,1> &, const xt::xtensor<double,1> &, const xt::xtensor<double,2> &, bool>(&M::Matrix::setCusp   ),py::arg("I"),py::arg("idx"),py::arg("kappa"),py::arg("mu"),py::arg("epsy"),py::arg("init_elastic")=true)
-  .def("setSmooth" , py::overload_cast<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &, const xt::xtensor<double,1> &, const xt::xtensor<double,1> &, const xt::xtensor<double,2> &, bool>(&M::Matrix::setSmooth ),py::arg("I"),py::arg("idx"),py::arg("kappa"),py::arg("mu"),py::arg("epsy"),py::arg("init_elastic")=true)
-  .def("shape"     , py::overload_cast<size_t>(&M::Matrix::shape, py::const_))
-  .def("shape"     , py::overload_cast<>      (&M::Matrix::shape, py::const_))
-  .def("type"      ,                           &M::Matrix::type)
-  .def("Sig"       , py::overload_cast<const xt::xtensor<double,4> &>(&M::Matrix::Sig   , py::const_), py::arg("a_Eps"))
-  .def("energy"    , py::overload_cast<const xt::xtensor<double,4> &>(&M::Matrix::energy, py::const_), py::arg("a_Eps"))
-  .def("find"      , py::overload_cast<const xt::xtensor<double,4> &>(&M::Matrix::find  , py::const_), py::arg("a_Eps"))
-  .def("epsy"      , py::overload_cast<const xt::xtensor<size_t,2> &>(&M::Matrix::epsy  , py::const_), py::arg("a_idx"))
-  .def("epsp"      , py::overload_cast<const xt::xtensor<double,4> &>(&M::Matrix::epsp  , py::const_), py::arg("a_Eps"))
+  .def("type"      , &SM::Matrix::type )
+  .def("nelem"     , &SM::Matrix::nelem)
+  .def("nip"       , &SM::Matrix::nip  )
+  .def("setElastic", py::overload_cast<const xt::xtensor<size_t,2> &,                                double,                        double                                                            >(&SM::Matrix::setElastic),py::arg("I"),               py::arg("K"),py::arg("G"))
+  .def("setCusp"   , py::overload_cast<const xt::xtensor<size_t,2> &,                                double,                        double,                        const xt::xtensor<double,1> &, bool>(&SM::Matrix::setCusp   ),py::arg("I"),               py::arg("K"),py::arg("G"),py::arg("epsy"),py::arg("init_elastic")=true)
+  .def("setSmooth" , py::overload_cast<const xt::xtensor<size_t,2> &,                                double,                        double,                        const xt::xtensor<double,1> &, bool>(&SM::Matrix::setSmooth ),py::arg("I"),               py::arg("K"),py::arg("G"),py::arg("epsy"),py::arg("init_elastic")=true)
+  .def("setElastic", py::overload_cast<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &, const xt::xtensor<double,1> &, const xt::xtensor<double,1> &                                     >(&SM::Matrix::setElastic),py::arg("I"),py::arg("idx"),py::arg("K"),py::arg("G"))
+  .def("setCusp"   , py::overload_cast<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &, const xt::xtensor<double,1> &, const xt::xtensor<double,1> &, const xt::xtensor<double,2> &, bool>(&SM::Matrix::setCusp   ),py::arg("I"),py::arg("idx"),py::arg("K"),py::arg("G"),py::arg("epsy"),py::arg("init_elastic")=true)
+  .def("setSmooth" , py::overload_cast<const xt::xtensor<size_t,2> &, const xt::xtensor<size_t,2> &, const xt::xtensor<double,1> &, const xt::xtensor<double,1> &, const xt::xtensor<double,2> &, bool>(&SM::Matrix::setSmooth ),py::arg("I"),py::arg("idx"),py::arg("K"),py::arg("G"),py::arg("epsy"),py::arg("init_elastic")=true)
+  .def("Sig"       , py::overload_cast<const xt::xtensor<double,4> &>(&SM::Matrix::Sig   , py::const_), py::arg("a_Eps"))
+  .def("energy"    , py::overload_cast<const xt::xtensor<double,4> &>(&SM::Matrix::energy, py::const_), py::arg("a_Eps"))
+  .def("find"      , py::overload_cast<const xt::xtensor<double,4> &>(&SM::Matrix::find  , py::const_), py::arg("a_Eps"))
+  .def("epsy"      , py::overload_cast<const xt::xtensor<size_t,2> &>(&SM::Matrix::epsy  , py::const_), py::arg("a_idx"))
+  .def("epsp"      , py::overload_cast<const xt::xtensor<double,4> &>(&SM::Matrix::epsp  , py::const_), py::arg("a_Eps"))
   // print to screen
-  .def("__repr__", [](const M::Matrix &){
-    return "<ElastoPlasticQPot3d.Matrix>"; });
+  .def("__repr__", [](const SM::Matrix &){
+    return "<ElastoPlasticQPot3d.Cartesian3d.Matrix>"; });
 
 // -------------------------------------------------------------------------------------------------
+
+}
+
+// =================================================================================================
 
 }
 
