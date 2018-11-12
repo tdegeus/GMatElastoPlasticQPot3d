@@ -4,8 +4,8 @@
 
 ================================================================================================= */
 
-#ifndef XGMATELASTOPLASTICQPOT3D_CARTESIAN3D_HPP
-#define XGMATELASTOPLASTICQPOT3D_CARTESIAN3D_HPP
+#ifndef GMATELASTOPLASTICQPOT3D_CARTESIAN3D_HPP
+#define GMATELASTOPLASTICQPOT3D_CARTESIAN3D_HPP
 
 // -------------------------------------------------------------------------------------------------
 
