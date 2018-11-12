@@ -3,7 +3,7 @@
 
 #define EQ(a,b) REQUIRE_THAT( (a), Catch::WithinAbs((b), 1.e-12) );
 
-#include "../include/GMatElastoPlasticQPot3d/GMatElastoPlasticQPot3d.h"
+#include "../include/GMatElastoPlasticQPot3d/Cartesian3d.h"
 
 namespace GM = GMatElastoPlasticQPot3d::Cartesian3d;
 

@@ -3,8 +3,8 @@
 
 #define EQ(a,b) REQUIRE_THAT( (a), Catch::WithinAbs((b), 1.e-12) );
 
-#include "../include/GMatElastoPlasticQPot3d/GMatElastoPlasticQPot3d.h"
-#include <GMatElastoPlasticQPot/GMatElastoPlasticQPot.h>
+#include "../include/GMatElastoPlasticQPot3d/Cartesian3d.h"
+#include <GMatElastoPlasticQPot/Cartesian2d.h>
 
 #include <xtensor/xrandom.hpp>
 
