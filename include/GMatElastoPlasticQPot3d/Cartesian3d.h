@@ -9,7 +9,7 @@
 
 // -------------------------------------------------------------------------------------------------
 
-#include "GMatElastoPlasticQPot3d.h"
+#include "config.h"
 
 // =================================================================================================
 
@@ -227,25 +227,31 @@ public:
 
   // set material definition for a batch of points
   // -
-  void setElastic(const xt::xtensor<size_t,2> &I,
+  void setElastic(
+    const xt::xtensor<size_t,2> &I,
     double kappa, double mu);
   // -
-  void setCusp(const xt::xtensor<size_t,2> &I,
+  void setCusp(
+    const xt::xtensor<size_t,2> &I,
     double kappa, double mu, const xt::xtensor<double,1> &epsy, bool init_elastic=true);
   // -
-  void setSmooth(const xt::xtensor<size_t,2> &I,
+  void setSmooth(
+    const xt::xtensor<size_t,2> &I,
     double kappa, double mu, const xt::xtensor<double,1> &epsy, bool init_elastic=true);
 
   // set material definition for a batch of points
   // -
-  void setElastic(const xt::xtensor<size_t,2> &I, const xt::xtensor<size_t,2> &idx,
+  void setElastic(
+    const xt::xtensor<size_t,2> &I, const xt::xtensor<size_t,2> &idx,
     const xt::xtensor<double,1> &kappa, const xt::xtensor<double,1> &mu);
   // -
-  void setCusp(const xt::xtensor<size_t,2> &I, const xt::xtensor<size_t,2> &idx,
+  void setCusp(
+    const xt::xtensor<size_t,2> &I, const xt::xtensor<size_t,2> &idx,
     const xt::xtensor<double,1> &kappa, const xt::xtensor<double,1> &mu,
     const xt::xtensor<double,2> &epsy, bool init_elastic=true);
   // -
-  void setSmooth(const xt::xtensor<size_t,2> &I, const xt::xtensor<size_t,2> &idx,
+  void setSmooth(
+    const xt::xtensor<size_t,2> &I, const xt::xtensor<size_t,2> &idx,
     const xt::xtensor<double,1> &kappa, const xt::xtensor<double,1> &mu,
     const xt::xtensor<double,2> &epsy, bool init_elastic=true);
 
@@ -284,6 +290,15 @@ private:
 // -------------------------------------------------------------------------------------------------
 
 }} // namespace ...
+
+// -------------------------------------------------------------------------------------------------
+
+#include "Cartesian3d.hpp"
+#include "Cartesian3d_Elastic.hpp"
+#include "Cartesian3d_Cusp.hpp"
+#include "Cartesian3d_Smooth.hpp"
+#include "Cartesian3d_Matrix.hpp"
+
 
 // -------------------------------------------------------------------------------------------------
 
