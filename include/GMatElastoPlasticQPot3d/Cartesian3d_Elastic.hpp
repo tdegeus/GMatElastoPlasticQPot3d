@@ -7,33 +7,34 @@
 #ifndef GMATELASTOPLASTICQPOT3D_CARTESIAN3D_ELASTIC_HPP
 #define GMATELASTOPLASTICQPOT3D_CARTESIAN3D_ELASTIC_HPP
 
-// -------------------------------------------------------------------------------------------------
-
 #include "Cartesian3d.h"
-
-// =================================================================================================
 
 namespace GMatElastoPlasticQPot3d {
 namespace Cartesian3d {
 
 // -------------------------------------------------------------------------------------------------
 
-inline Elastic::Elastic(double K, double G) : m_kappa(K), m_mu(G)
+inline Elastic::Elastic(double K, double G) : m_K(K), m_G(G)
 {
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline double Elastic::epsd(const T2s &Eps) const
+inline double Elastic::K() const
 {
-  auto Epsd = Eps - trace(Eps)/3. * eye();
-
-  return std::sqrt(.5*ddot(Epsd,Epsd));
+  return m_K;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline double Elastic::epsp(const T2s &) const
+inline double Elastic::G() const
+{
+  return m_G;
+}
+
+// -------------------------------------------------------------------------------------------------
+
+inline double Elastic::epsp(const Tensor2&) const
 {
   return 0.0;
 }
@@ -54,7 +55,7 @@ inline double Elastic::epsy(size_t) const
 
 // -------------------------------------------------------------------------------------------------
 
-inline size_t Elastic::find(const T2s &) const
+inline size_t Elastic::find(const Tensor2&) const
 {
   return 0;
 }
@@ -68,40 +69,39 @@ inline size_t Elastic::find(double) const
 
 // -------------------------------------------------------------------------------------------------
 
-inline T2s Elastic::Sig(const T2s &Eps) const
+template <class T>
+inline void Elastic::stress(const Tensor2& Eps, T&& Sig) const
 {
-  // decompose strain: hydrostatic part, deviatoric part
-  T2s  I     = eye();
-  auto treps = trace(Eps);
-  auto Epsd  = Eps - treps/3. * I;
-
-  // return stress tensor
-  return m_kappa * treps * I + 2.0 * m_mu * Epsd;
+  auto I = Cartesian3d::I2();
+  auto epsm = trace(Eps) / 3.0;
+  auto Epsd = Eps - epsm * I;
+  xt::noalias(Sig) = 3.0 * m_K * epsm * I + 2.0 * m_G * Epsd;
 }
 
 // -------------------------------------------------------------------------------------------------
 
-inline double Elastic::energy(const T2s &Eps) const
+inline Tensor2 Elastic::Stress(const Tensor2& Eps) const
 {
-  // decompose strain: hydrostatic part, deviatoric part
-  T2s  I     = eye();
-  auto treps = trace(Eps);
-  auto Epsd  = Eps - treps/3. * I;
-  auto epsd  = std::sqrt(.5*ddot(Epsd,Epsd));
+  Tensor2 Sig;
+  this->stress(Eps, Sig);
+  return Sig;
+}
 
-  // hydrostatic part of the energy
-  double U = 0.5 * m_kappa * std::pow(treps,2.);
-  // deviatoric part of the energy
-  double V = 2.0 * m_mu    * std::pow(epsd ,2.);
+// -------------------------------------------------------------------------------------------------
 
-  // return total energy
+inline double Elastic::energy(const Tensor2& Eps) const
+{
+  auto I = Cartesian3d::I2();
+  auto epsm = trace(Eps) / 3.0;
+  auto Epsd = Eps - epsm * I;
+  auto epsd = std::sqrt(0.5 * A2_ddot_B2(Epsd,Epsd));
+  auto U = 3.0 * m_K * std::pow(epsm, 2.0);
+  auto V = 2.0 * m_G * std::pow(epsd, 2.0);
   return U + V;
 }
 
-// =================================================================================================
+// -------------------------------------------------------------------------------------------------
 
 }} // namespace ...
-
-// =================================================================================================
 
 #endif
