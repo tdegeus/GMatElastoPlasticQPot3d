@@ -1,9 +1,7 @@
 prefix=@CMAKE_INSTALL_PREFIX@
-exec_prefix=${prefix}
+includedir=${prefix}/include
 
-Name: ElastoPlasticQPot
-Description: Elasto-plastic model using multiple quadratic potentials
-Requires:
+Name: @PROJECT_NAME@
+Description: Linear elastic material model.
 Version: @GMATELASTOPLASTICQPOT3D_VERSION@
-Libs:
-Cflags: -I${prefix}/@GMATELASTOPLASTICQPOT3D_INCLUDE_DIR@
+Cflags: -I${includedir}

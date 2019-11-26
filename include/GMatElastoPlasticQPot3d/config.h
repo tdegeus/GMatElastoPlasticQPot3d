@@ -19,8 +19,8 @@
 #include <iostream>
 #include <vector>
 #include <xtensor/xarray.hpp>
-#include <xtensor/xnoalias.hpp>
 #include <xtensor/xtensor.hpp>
+#include <xtensor/xnoalias.hpp>
 #include <xtensor/xfixed.hpp>
 #include <xtensor/xadapt.hpp>
 #include <xtensor/xview.hpp>
@@ -29,26 +29,36 @@
 #include <xtensor/xsort.hpp>
 #include <xtensor/xmath.hpp>
 
+#ifndef NDEBUG
+#define GMATELASTOPLASTICQPOT3D_ENABLE_ASSERT
+#endif
+
+#ifdef GMATELASTOPLASTICQPOT3D_ENABLE_ASSERT
+#define GMATELASTOPLASTICQPOT3D_ASSERT(expr) GMATELASTOPLASTICQPOT3D_ASSERT_IMPL(expr, __FILE__, __LINE__)
+#define GMATELASTOPLASTICQPOT3D_ASSERT_IMPL(expr, file, line)                                                               \
+    if (!(expr))                                                                                                          \
+    {                                                                                                                     \
+        throw std::runtime_error(std::string(file) + ':' + std::to_string(line) + ": assertion failed (" #expr ") \n\t"); \
+    }
+#else
+#define GMATELASTOPLASTICQPOT3D_ASSERT(expr)
+#endif
+
 // -------------------------------------------------------------------------------------------------
 
-// dummy operation that can be use to suppress the "unused parameter" warnings
-#define UNUSED(p) ( (void)(p) )
-
-// -------------------------------------------------------------------------------------------------
-
-#define GMATELASTOPLASTICQPOT3D_WORLD_VERSION 0
-#define GMATELASTOPLASTICQPOT3D_MAJOR_VERSION 0
-#define GMATELASTOPLASTICQPOT3D_MINOR_VERSION 3
+#define GMATELASTOPLASTICQPOT3D_VERSION_MAJOR 0
+#define GMATELASTOPLASTICQPOT3D_VERSION_MINOR 0
+#define GMATELASTOPLASTICQPOT3D_VERSION_PATCH 4
 
 #define GMATELASTOPLASTICQPOT3D_VERSION_AT_LEAST(x,y,z) \
-  (GMATELASTOPLASTICQPOT3D_WORLD_VERSION>x || (GMATELASTOPLASTICQPOT3D_WORLD_VERSION>=x && \
-  (GMATELASTOPLASTICQPOT3D_MAJOR_VERSION>y || (GMATELASTOPLASTICQPOT3D_MAJOR_VERSION>=y && \
-                                               GMATELASTOPLASTICQPOT3D_MINOR_VERSION>=z))))
+  (GMATELASTOPLASTICQPOT3D_VERSION_MAJOR > x || (GMATELASTOPLASTICQPOT3D_VERSION_MAJOR >= x && \
+  (GMATELASTOPLASTICQPOT3D_VERSION_MINOR > y || (GMATELASTOPLASTICQPOT3D_VERSION_MINOR >= y && \
+                                                 GMATELASTOPLASTICQPOT3D_VERSION_PATCH >= z))))
 
 #define GMATELASTOPLASTICQPOT3D_VERSION(x,y,z) \
-  (GMATELASTOPLASTICQPOT3D_WORLD_VERSION==x && \
-   GMATELASTOPLASTICQPOT3D_MAJOR_VERSION==y && \
-   GMATELASTOPLASTICQPOT3D_MINOR_VERSION==z)
+  (GMATELASTOPLASTICQPOT3D_VERSION_MAJOR == x && \
+   GMATELASTOPLASTICQPOT3D_VERSION_MINOR == y && \
+   GMATELASTOPLASTICQPOT3D_VERSION_PATCH == z)
 
 // -------------------------------------------------------------------------------------------------
 
