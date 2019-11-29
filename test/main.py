@@ -25,7 +25,7 @@ Eps = [[ epsm  , gamma, 0.  ],
        [ gamma , epsm , 0.  ],
        [ 0.    , 0.   , epsm]]
 # - stress
-Sig = mat.Sig(Eps)
+Sig = mat.Stress(Eps)
 # - analytical solution
 EQ( Sig[0,0], 3. * kappa * epsm  )
 EQ( Sig[1,1], 3. * kappa * epsm  )
@@ -59,7 +59,7 @@ Eps = [[ epsm  , gamma, 0.  ],
        [ gamma , epsm , 0.  ],
        [ 0.    , 0.   , epsm]]
 # - stress
-Sig = mat.Sig(Eps)
+Sig = mat.Stress(Eps)
 # - analytical solution
 EQ( Sig[0,0], 3. * kappa * epsm  )
 EQ( Sig[1,1], 3. * kappa * epsm  )
@@ -93,7 +93,7 @@ Eps = [[ epsm  , gamma, 0.  ],
        [ gamma , epsm , 0.  ],
        [ 0.    , 0.   , epsm]]
 # - stress
-Sig = mat.Sig(Eps)
+Sig = mat.Stress(Eps)
 # - analytical solution
 EQ( Sig[0,0], 3. * kappa * epsm  )
 EQ( Sig[1,1], 3. * kappa * epsm  )
@@ -145,8 +145,8 @@ Eps[:,:,2,2] = epsm
 Eps[:,:,0,1] = gamma
 Eps[:,:,1,0] = gamma
 # - stress & plastic strain
-Sig  = mat.Sig (Eps)
-epsp = mat.epsp(Eps)
+Sig  = mat.Stress(Eps)
+epsp = mat.Epsp(Eps)
 
 # - analytical solution
 EQ( Sig[0,0,0,0], 3. * kappa * epsm ); EQ( Sig[0,1,0,0], 3. * kappa * epsm )
