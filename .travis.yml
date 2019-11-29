@@ -91,4 +91,4 @@ install:
 script:
     # Run tests
     - ./test/main
-    - python ./test/main.py
+    - python ./test/Cartesian3d.py
