@@ -116,7 +116,7 @@ kappa = 12.3
 mu    = 45.6
 
 # allocate matrix
-mat = GMat.Matrix([3,2])
+mat = GMat.Matrix(3, 2)
 
 # row 0: elastic
 I      = np.zeros(mat.shape(), dtype='int')
