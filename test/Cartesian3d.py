@@ -22,11 +22,11 @@ mat = GMat.Elastic(K, G)
 
 Sig = mat.Stress(Eps)
 
-EQ(Sig[0,0], K * epsm)
-EQ(Sig[1,1], K * epsm)
-EQ(Sig[2,2], K * epsm)
-EQ(Sig[0,1], G * gamma)
-EQ(Sig[1,0], G * gamma)
+EQ(Sig[0,0], 3.0 * K * epsm)
+EQ(Sig[1,1], 3.0 * K * epsm)
+EQ(Sig[2,2], 3.0 * K * epsm)
+EQ(Sig[0,1], 2.0 * G * gamma)
+EQ(Sig[1,0], 2.0 * G * gamma)
 
 # Cusp
 
@@ -34,9 +34,9 @@ mat = GMat.Cusp(K, G, [0.01, 0.03, 0.10])
 
 Sig = mat.Stress(Eps)
 
-EQ(Sig[0,0], K * epsm)
-EQ(Sig[1,1], K * epsm)
-EQ(Sig[2,2], K * epsm)
+EQ(Sig[0,0], 3.0 * K * epsm)
+EQ(Sig[1,1], 3.0 * K * epsm)
+EQ(Sig[2,2], 3.0 * K * epsm)
 EQ(Sig[0,1], G * 0.0)
 EQ(Sig[1,0], G * 0.0)
 
@@ -50,9 +50,9 @@ mat = GMat.Smooth(K, G, [0.01, 0.03, 0.10])
 
 Sig = mat.Stress(Eps)
 
-EQ(Sig[0,0], K * epsm)
-EQ(Sig[1,1], K * epsm)
-EQ(Sig[2,2], K * epsm)
+EQ(Sig[0,0], 3.0 * K * epsm)
+EQ(Sig[1,1], 3.0 * K * epsm)
+EQ(Sig[2,2], 3.0 * K * epsm)
 EQ(Sig[0,1], G * 0.0)
 EQ(Sig[1,0], G * 0.0)
 
@@ -91,19 +91,19 @@ epsp = mat.Epsp(eps)
 
 for q in range(nip):
 
-    EQ(sig[0,q,0,0], K * epsm)
-    EQ(sig[0,q,1,1], K * epsm)
-    EQ(sig[0,q,2,2], K * epsm)
-    EQ(sig[0,q,0,1], G * gamma)
-    EQ(sig[0,q,0,1], G * gamma)
-    EQ(sig[1,q,0,0], K * epsm)
-    EQ(sig[1,q,1,1], K * epsm)
-    EQ(sig[1,q,2,2], K * epsm)
+    EQ(sig[0,q,0,0], 3.0 * K * epsm)
+    EQ(sig[0,q,1,1], 3.0 * K * epsm)
+    EQ(sig[0,q,2,2], 3.0 * K * epsm)
+    EQ(sig[0,q,0,1], 2.0 * G * gamma)
+    EQ(sig[0,q,0,1], 2.0 * G * gamma)
+    EQ(sig[1,q,0,0], 3.0 * K * epsm)
+    EQ(sig[1,q,1,1], 3.0 * K * epsm)
+    EQ(sig[1,q,2,2], 3.0 * K * epsm)
     EQ(sig[1,q,0,1], G * 0.0)
     EQ(sig[1,q,0,1], G * 0.0)
-    EQ(sig[2,q,0,0], K * epsm)
-    EQ(sig[2,q,1,1], K * epsm)
-    EQ(sig[2,q,2,2], K * epsm)
+    EQ(sig[2,q,0,0], 3.0 * K * epsm)
+    EQ(sig[2,q,1,1], 3.0 * K * epsm)
+    EQ(sig[2,q,2,2], 3.0 * K * epsm)
     EQ(sig[2,q,0,1], G * 0.0)
     EQ(sig[2,q,0,1], G * 0.0)
 
