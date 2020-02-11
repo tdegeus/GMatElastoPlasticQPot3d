@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.0)
 
 # Basic settings
@@ -10,21 +11,21 @@ option(BUILD_TESTS "${PROJECT_NAME} Build tests" OFF)
 # Version
 # =======
 
-file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/GMatElastoPlasticQPot3d/config.h" GMatElastoPlasticQPot3d_version_defines
+file(STRINGS "${CMAKE_CURRENT_SOURCE_DIR}/include/GMatElastoPlasticQPot3d/config.h"
+             _GMAT_version_defines
      REGEX "#define GMATELASTOPLASTICQPOT3D_VERSION_(MAJOR|MINOR|PATCH)")
 
-foreach(ver ${GMatElastoPlasticQPot3d_version_defines})
+foreach(ver ${_GMAT_version_defines})
     if(ver MATCHES "#define GMATELASTOPLASTICQPOT3D_VERSION_(MAJOR|MINOR|PATCH) +([^ ]+)$")
-    set(GMATELASTOPLASTICQPOT3D_VERSION_${CMAKE_MATCH_1}
-        "${CMAKE_MATCH_2}"
-        CACHE INTERNAL "")
+        set(_GMAT_VERSION_${CMAKE_MATCH_1}
+            "${CMAKE_MATCH_2}"
+            CACHE INTERNAL "")
     endif()
 endforeach()
 
-set(GMATELASTOPLASTICQPOT3D_VERSION
-    ${GMATELASTOPLASTICQPOT3D_VERSION_MAJOR}.${GMATELASTOPLASTICQPOT3D_VERSION_MINOR}.${GMATELASTOPLASTICQPOT3D_VERSION_PATCH})
+set(_GMAT_VERSION ${_GMAT_VERSION_MAJOR}.${_GMAT_VERSION_MINOR}.${_GMAT_VERSION_PATCH})
 
-message(STATUS "Building GMatElastoPlasticQPot3d v${GMATELASTOPLASTICQPOT3D_VERSION}")
+message(STATUS "Building GMatElastoPlasticQPot3d v${_GMAT_VERSION}")
 
 # Set target
 # ==========
@@ -50,18 +51,19 @@ install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/include/" DESTINATION include)
 install(TARGETS GMatElastoPlasticQPot3d EXPORT GMatElastoPlasticQPot3d-targets)
 
 install(
-  EXPORT GMatElastoPlasticQPot3d-targets
-  FILE GMatElastoPlasticQPot3dTargets.cmake
-  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/GMatElastoPlasticQPot3d")
+    EXPORT GMatElastoPlasticQPot3d-targets
+    FILE GMatElastoPlasticQPot3dTargets.cmake
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/GMatElastoPlasticQPot3d")
 
-set(_GMATELASTOPLASTICQPOT3D ${CMAKE_SIZEOF_VOID_P})
+set(_GMAT ${CMAKE_SIZEOF_VOID_P})
 unset(CMAKE_SIZEOF_VOID_P)
 
-write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/GMatElastoPlasticQPot3dConfigVersion.cmake"
-    VERSION ${GMATELASTOPLASTICQPOT3D_VERSION}
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/GMatElastoPlasticQPot3dConfigVersion.cmake"
+    VERSION ${_GMAT_VERSION}
     COMPATIBILITY AnyNewerVersion)
 
-set(CMAKE_SIZEOF_VOID_P ${_GMATELASTOPLASTICQPOT3D})
+set(CMAKE_SIZEOF_VOID_P ${_GMAT})
 
 install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/GMatElastoPlasticQPot3dConfig.cmake"
               "${CMAKE_CURRENT_BINARY_DIR}/GMatElastoPlasticQPot3dConfigVersion.cmake"

@@ -6,14 +6,14 @@
 #
 # In addition, it sets the following variables:
 #
-#     GMatElastoPlasticQPot3d_FOUND - true if GMatElastoPlasticQPot3d found
-#     GMatElastoPlasticQPot3d_VERSION - GMatElastoPlasticQPot3d's version
-#     GMatElastoPlasticQPot3d_INCLUDE_DIRS - the directory containing GMatElastoPlasticQPot3d headers
+#     GMatElastoPlasticQPot3d_FOUND - true if the library is found
+#     GMatElastoPlasticQPot3d_VERSION - the library's version
+#     GMatElastoPlasticQPot3d_INCLUDE_DIRS - directory containing the library's headers
 #
 # The following support targets are defined to simplify things:
 #
 #     GMatElastoPlasticQPot3d::compiler_warnings - enable compiler warnings
-#     GMatElastoPlasticQPot3d::assert - enable GMatElastoPlasticQPot3d assertions
+#     GMatElastoPlasticQPot3d::assert - enable library assertions
 #     GMatElastoPlasticQPot3d::debug - enable all assertions (slow)
 
 include(CMakeFindDependencyMacro)
@@ -22,11 +22,14 @@ include(CMakeFindDependencyMacro)
 
 if(NOT TARGET GMatElastoPlasticQPot3d)
     include("${CMAKE_CURRENT_LIST_DIR}/GMatElastoPlasticQPot3dTargets.cmake")
-    get_target_property(
-        GMatElastoPlasticQPot3d_INCLUDE_DIRS
-        GMatElastoPlasticQPot3d
-        INTERFACE_INCLUDE_DIRECTORIES)
 endif()
+
+# Define "GMatElastoPlasticQPot3d_INCLUDE_DIRS"
+
+get_target_property(
+    GMatElastoPlasticQPot3d_INCLUDE_DIRS
+    GMatElastoPlasticQPot3d
+    INTERFACE_INCLUDE_DIRECTORIES)
 
 # Find dependencies
 
