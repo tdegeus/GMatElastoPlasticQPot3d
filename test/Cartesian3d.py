@@ -19,7 +19,6 @@ Eps = np.array(
 # Elastic
 
 mat = GMat.Elastic(K, G)
-
 Sig = mat.Stress(Eps)
 
 EQ(Sig[0,0], 3.0 * K * epsm)
@@ -31,7 +30,6 @@ EQ(Sig[1,0], 2.0 * G * gamma)
 # Cusp
 
 mat = GMat.Cusp(K, G, [0.01, 0.03, 0.10])
-
 Sig = mat.Stress(Eps)
 
 EQ(Sig[0,0], 3.0 * K * epsm)
@@ -39,15 +37,12 @@ EQ(Sig[1,1], 3.0 * K * epsm)
 EQ(Sig[2,2], 3.0 * K * epsm)
 EQ(Sig[0,1], G * 0.0)
 EQ(Sig[1,0], G * 0.0)
-
 EQ(mat.epsp(Eps), 0.02)
-
 EQ(mat.find(Eps), 1)
 
 # Smooth
 
 mat = GMat.Smooth(K, G, [0.01, 0.03, 0.10])
-
 Sig = mat.Stress(Eps)
 
 EQ(Sig[0,0], 3.0 * K * epsm)
@@ -55,9 +50,7 @@ EQ(Sig[1,1], 3.0 * K * epsm)
 EQ(Sig[2,2], 3.0 * K * epsm)
 EQ(Sig[0,1], G * 0.0)
 EQ(Sig[1,0], G * 0.0)
-
 EQ(mat.epsp(Eps), 0.02)
-
 EQ(mat.find(Eps), 1)
 
 # Matrix
@@ -66,17 +59,14 @@ nelem = 3
 nip = 2
 mat = GMat.Matrix(nelem, nip)
 
-# row 0: elastic
 I = np.zeros([nelem, nip], dtype='int')
 I[0,:] = 1
 mat.setElastic(I, K, G)
 
-# row 1: cups
 I = np.zeros([nelem, nip], dtype='int')
 I[1,:] = 1
 mat.setCusp(I, K, G, [0.01, 0.03, 0.10])
 
-# row 2: smooth
 I = np.zeros([nelem, nip], dtype='int')
 I[2,:] = 1
 mat.setSmooth(I, K, G, [0.01, 0.03, 0.10])
@@ -96,19 +86,20 @@ for q in range(nip):
     EQ(sig[0,q,2,2], 3.0 * K * epsm)
     EQ(sig[0,q,0,1], 2.0 * G * gamma)
     EQ(sig[0,q,0,1], 2.0 * G * gamma)
+    EQ(epsp[0,q], 0.0)
+
     EQ(sig[1,q,0,0], 3.0 * K * epsm)
     EQ(sig[1,q,1,1], 3.0 * K * epsm)
     EQ(sig[1,q,2,2], 3.0 * K * epsm)
     EQ(sig[1,q,0,1], G * 0.0)
     EQ(sig[1,q,0,1], G * 0.0)
+    EQ(epsp[1,q], gamma)
+
     EQ(sig[2,q,0,0], 3.0 * K * epsm)
     EQ(sig[2,q,1,1], 3.0 * K * epsm)
     EQ(sig[2,q,2,2], 3.0 * K * epsm)
     EQ(sig[2,q,0,1], G * 0.0)
     EQ(sig[2,q,0,1], G * 0.0)
-
-    EQ(epsp[0,q], 0.0)
-    EQ(epsp[1,q], gamma)
     EQ(epsp[2,q], gamma)
 
 print('All checks passed')

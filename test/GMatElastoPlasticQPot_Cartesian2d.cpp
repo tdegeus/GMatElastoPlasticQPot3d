@@ -117,27 +117,25 @@ SECTION("Matrix")
     GM::Matrix mat_GM(3, 2);
     RF::Matrix mat_RF(3, 2);
 
-    // row 0: elastic
     {
         xt::xtensor<size_t, 2> I = xt::zeros<size_t>({mat_GM.nelem(), mat_GM.nip()});
         xt::view(I, 0, xt::all()) = 1;
         mat_GM.setElastic(I, kappa, mu);
     }
-    // row 0: elastic
+
     {
         xt::xtensor<size_t, 2> I = xt::zeros<size_t>({mat_RF.nelem(), mat_RF.nip()});
         xt::view(I, 0, xt::all()) = 1;
         mat_RF.setElastic(I, 3. * kappa, 2. * mu);
     }
 
-    // row 1: cups
     {
         xt::xtensor<size_t, 2> I = xt::zeros<size_t>({mat_GM.nelem(), mat_GM.nip()});
         xt::xtensor<double, 1> epsy = {0.01, 0.2, 2.0};
         xt::view(I, 1, xt::all()) = 1;
         mat_GM.setCusp(I, kappa, mu, epsy);
     }
-    // row 1: cups
+
     {
         xt::xtensor<size_t, 2> I = xt::zeros<size_t>({mat_RF.nelem(), mat_RF.nip()});
         xt::xtensor<double, 1> epsy = {0.01, 0.2, 2.0};
@@ -145,14 +143,13 @@ SECTION("Matrix")
         mat_RF.setCusp(I, 3. * kappa, 2. * mu, epsy);
     }
 
-    // row 2: smooth
     {
         xt::xtensor<size_t, 2> I = xt::zeros<size_t>({mat_GM.nelem(), mat_GM.nip()});
         xt::xtensor<double, 1> epsy = {0.01, 0.2, 2.0};
         xt::view(I, 2, xt::all()) = 1;
         mat_GM.setCusp(I, kappa, mu, epsy);
     }
-    // row 2: smooth
+
     {
         xt::xtensor<size_t, 2> I = xt::zeros<size_t>({mat_RF.nelem(), mat_RF.nip()});
         xt::xtensor<double, 1> epsy = {0.01, 0.2, 2.0};
