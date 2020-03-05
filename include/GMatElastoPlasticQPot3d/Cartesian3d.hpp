@@ -19,6 +19,76 @@ inline Tensor2 I2()
                     {0.0, 0.0, 1.0}});
 }
 
+inline Tensor4 II()
+{
+    Tensor4 out;
+    out.fill(0.0);
+
+    for (size_t i = 0; i < 3; ++i) {
+        for (size_t j = 0; j < 3; ++j) {
+            for (size_t k = 0; k < 3; ++k) {
+                for (size_t l = 0; l < 3; ++l) {
+                    if (i == j and k == l) {
+                        out(i, j, k, l) = 1.0;
+                    }
+                }
+            }
+        }
+    }
+
+    return out;
+}
+
+inline Tensor4 I4()
+{
+    Tensor4 out;
+    out.fill(0.0);
+
+    for (size_t i = 0; i < 3; ++i) {
+        for (size_t j = 0; j < 3; ++j) {
+            for (size_t k = 0; k < 3; ++k) {
+                for (size_t l = 0; l < 3; ++l) {
+                    if (i == l and j == k) {
+                        out(i, j, k, l) = 1.0;
+                    }
+                }
+            }
+        }
+    }
+
+    return out;
+}
+
+inline Tensor4 I4rt()
+{
+    Tensor4 out;
+    out.fill(0.0);
+
+    for (size_t i = 0; i < 3; ++i) {
+        for (size_t j = 0; j < 3; ++j) {
+            for (size_t k = 0; k < 3; ++k) {
+                for (size_t l = 0; l < 3; ++l) {
+                    if (i == k and j == l) {
+                        out(i, j, k, l) = 1.0;
+                    }
+                }
+            }
+        }
+    }
+
+    return out;
+}
+
+inline Tensor4 I4s()
+{
+    return 0.5 * (I4() + I4rt());
+}
+
+inline Tensor4 I4d()
+{
+    return I4s() - II() / 3.0;
+}
+
 inline double Hydrostatic(const Tensor2& A)
 {
     return trace(A) / 3.0;

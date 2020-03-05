@@ -90,7 +90,7 @@ inline void Smooth::stress(const Tensor2& Eps, T&& Sig) const
     double deps_y = 0.5 * (m_epsy(i + 1) - m_epsy(i));
 
     // return stress tensor
-    xt::noalias(Sig) 
+    xt::noalias(Sig)
         = 3.0 * m_K * epsm * I
         + (2.0 * m_G / epsd) * (deps_y / M_PI) * sin(M_PI / deps_y * (epsd - eps_min)) * Epsd;
 }
@@ -100,6 +100,23 @@ inline Tensor2 Smooth::Stress(const Tensor2& Eps) const
     Tensor2 Sig;
     this->stress(Eps, Sig);
     return Sig;
+}
+
+template <class T, class S>
+inline void Smooth::tangent(const Tensor2& Eps, T&& Sig, S&& C) const
+{
+    auto II = Cartesian3d::II();
+    auto I4d = Cartesian3d::I4d();
+    this->stress(Eps, Sig);
+    xt::noalias(C) = m_K * II + 2.0 * m_G * I4d;
+}
+
+inline std::tuple<Tensor2, Tensor4> Smooth::Tangent(const Tensor2& Eps) const
+{
+    Tensor2 Sig;
+    Tensor4 C;
+    this->tangent(Eps, Sig, C);
+    return std::make_tuple(Sig, C);
 }
 
 inline double Smooth::energy(const Tensor2& Eps) const

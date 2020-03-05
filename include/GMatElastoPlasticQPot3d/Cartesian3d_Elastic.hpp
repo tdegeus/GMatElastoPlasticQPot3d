@@ -42,6 +42,23 @@ inline Tensor2 Elastic::Stress(const Tensor2& Eps) const
     return Sig;
 }
 
+template <class T, class S>
+inline void Elastic::tangent(const Tensor2& Eps, T&& Sig, S&& C) const
+{
+    auto II = Cartesian3d::II();
+    auto I4d = Cartesian3d::I4d();
+    this->stress(Eps, Sig);
+    xt::noalias(C) = m_K * II + 2.0 * m_G * I4d;
+}
+
+inline std::tuple<Tensor2, Tensor4> Elastic::Tangent(const Tensor2& Eps) const
+{
+    Tensor2 Sig;
+    Tensor4 C;
+    this->tangent(Eps, Sig, C);
+    return std::make_tuple(Sig, C);
+}
+
 inline double Elastic::energy(const Tensor2& Eps) const
 {
     auto I = Cartesian3d::I2();
