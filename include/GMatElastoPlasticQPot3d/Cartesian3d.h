@@ -77,31 +77,26 @@ public:
     Elastic() = default;
     Elastic(double K, double G);
 
-    // Parameters
+    // Get parameters
     double K() const;
     double G() const;
 
-    // Stress (no allocation, overwrites "Sig")
+    // Update strain
     template <class U>
-    void stress(const Tensor2& Eps, U&& Sig) const;
+    void set_strain(const U&& Eps);
 
-    // Stress (auto allocation)
-    Tensor2 Stress(const Tensor2& Eps) const;
-
-    // Stress & Tangent (no allocation, overwrites "Sig" and "C")
-    template <class U, class V>
-    void tangent(const Tensor2& Eps, U&& Sig, V&& C) const;
-
-    // Stress & Tangent (auto allocation)
-    std::tuple<Tensor2, Tensor4> Tangent(const Tensor2& Eps) const;
-
-    // Energy
-    double energy(const Tensor2& Eps) const;
+    // Get response based on the current strain (see "set_strain")
+    template <class U> void stress(U&& Sig) const;
+    template <class U> void tangent(V&& C) const;
+    Tensor2 Stress() const; // stress tensor (fourth order)
+    Tensor4 Tangent() const; // tangent tensor (fourth order)
+    double energy() const; // potential energy
 
 private:
 
     double m_K; // bulk modulus
     double m_G; // shear modulus
+    Tensor2 m_Eps; // current strain
 };
 
 
@@ -115,42 +110,33 @@ public:
     Cusp() = default;
     Cusp(double K, double G, const xt::xtensor<double,1>& epsy, bool init_elastic = true);
 
-    // Parameters
+    // Get parameters
     double K() const;
     double G() const;
     xt::xtensor<double,1> epsy() const;
     double epsy(size_t idx) const;
 
-    // Stress (no allocation, overwrites "Sig")
+    // Update strain
     template <class U>
-    void stress(const Tensor2& Eps, U&& Sig) const;
+    void set_strain(const U&& Eps);
 
-    // Stress (auto allocation)
-    Tensor2 Stress(const Tensor2& Eps) const;
-
-    // Stress & Tangent (no allocation, overwrites "Sig" and "C")
-    template <class U, class V>
-    void tangent(const Tensor2& Eps, U&& Sig, V&& C) const;
-
-    // Stress & Tangent (auto allocation)
-    std::tuple<Tensor2, Tensor4> Tangent(const Tensor2& Eps) const;
-
-    // Energy
-    double energy(const Tensor2& Eps) const;
-
-    // Index of the current yield strain
-    size_t find(const Tensor2& Eps) const; // strain tensor
-    size_t find(double epsd) const; // equivalent deviatoric strain (epsd == Deviatoric(Eps))
-
-    // Equivalent plastic strain
-    double epsp(const Tensor2& Eps) const; // strain tensor
-    double epsp(double epsd) const; // equivalent deviatoric strain (epsd == Deviatoric(Eps))
+    // Get response based on the current strain (see "set_strain")
+    template <class U> void stress(U&& Sig) const;
+    template <class U> void tangent(V&& C) const;
+    Tensor2 Stress() const; // stress tensor (fourth order)
+    Tensor4 Tangent() const; // tangent tensor (fourth order)
+    double energy() const; // potential energy
+    size_t index() const; // index of the current yield strain
+    double epsy_pos() const; // yield strain for an increase of equivalent strain: epsy[index + 1]
+    double epsy_neg() const; // yield strain for a decrease of equivalent strain: epsy[index]
+    double epsp() const; // 'plastic' strain
 
 private:
 
     double m_K; // bulk modulus
     double m_G; // shear modulus
     xt::xtensor<double,1> m_epsy; // yield strains
+    Tensor2 m_Eps; // current strain
 };
 
 // Material point
@@ -163,42 +149,33 @@ public:
     Smooth() = default;
     Smooth(double K, double G, const xt::xtensor<double,1>& epsy, bool init_elastic = true);
 
-    // Parameters
+    // Get parameters
     double K() const;
     double G() const;
     xt::xtensor<double,1> epsy() const;
     double epsy(size_t idx) const;
 
-    // Stress (no allocation, overwrites "Sig")
+    // Update strain
     template <class U>
-    void stress(const Tensor2& Eps, U&& Sig) const;
+    void set_strain(const U&& Eps);
 
-    // Stress (auto allocation)
-    Tensor2 Stress(const Tensor2& Eps) const;
-
-    // Stress & Tangent (no allocation, overwrites "Sig" and "C")
-    template <class U, class V>
-    void tangent(const Tensor2& Eps, U&& Sig, V&& C) const;
-
-    // Stress & Tangent (auto allocation)
-    std::tuple<Tensor2, Tensor4> Tangent(const Tensor2& Eps) const;
-
-    // Energy
-    double energy(const Tensor2& Eps) const;
-
-    // Index of the current yield strain
-    size_t find(const Tensor2& Eps) const; // strain tensor
-    size_t find(double epsd) const; // equivalent deviatoric strain (epsd == Deviatoric(Eps))
-
-    // Equivalent plastic strain
-    double epsp(const Tensor2& Eps) const; // strain tensor
-    double epsp(double epsd) const; // equivalent deviatoric strain (epsd == Deviatoric(Eps))
+    // Get response based on the current strain (see "set_strain")
+    template <class U> void stress(U&& Sig) const;
+    template <class U> void tangent(V&& C) const;
+    Tensor2 Stress() const; // stress tensor (fourth order)
+    Tensor4 Tangent() const; // tangent tensor (fourth order)
+    double energy() const; // potential energy
+    size_t index() const; // index of the current yield strain
+    double epsy_pos() const; // yield strain for an increase of equivalent strain: epsy[index + 1]
+    double epsy_neg() const; // yield strain for a decrease of equivalent strain: epsy[index]
+    double epsp() const; // 'plastic' strain
 
 private:
 
     double m_K; // bulk modulus
     double m_G; // shear modulus
     xt::xtensor<double,1> m_epsy; // yield strains
+    Tensor2 m_Eps; // current strain
 };
 
 // Material identifier
@@ -303,43 +280,25 @@ public:
         const xt::xtensor<double,2>& epsy,
         bool init_elastic = true);
 
-    // Compute (no allocation, overwrites last argument)
+    // Compute response (see above)
 
-    void stress(
-        const xt::xtensor<double,4>& Eps,
-              xt::xtensor<double,4>& Sig) const;
+    void set_strain(const xt::xtensor<double,4>& Eps);
 
-    void tangent(
-        const xt::xtensor<double,4>& Eps,
-              xt::xtensor<double,4>& Sig,
-              xt::xtensor<double,6>& C) const;
+    void stress(xt::xtensor<double,4>& Sig) const;
+    void tangent(xt::xtensor<double,6>& C) const;
+    void energy(xt::xtensor<double,2>& energy) const;
+    void index(xt::xtensor<size_t,2>& idx) const;
+    void epsy_pos(xt::xtensor<double,2>& epsy) const;
+    void epsy_neg(xt::xtensor<double,2>& epsy) const;
+    void epsp(xt::xtensor<double,2>& epsp) const;
 
-    void energy(
-        const xt::xtensor<double,4>& Eps,
-              xt::xtensor<double,2>& energy) const;
-
-    void find(
-        const xt::xtensor<double,4>& Eps,
-              xt::xtensor<size_t,2>& idx) const;
-
-    void epsy(
-        const xt::xtensor<size_t,2>& idx,
-              xt::xtensor<double,2>& epsy) const;
-
-    void epsp(
-        const xt::xtensor<double,4>& Eps,
-              xt::xtensor<double,2>& epsp) const;
-
-    // Auto-allocation of the functions above
-
-    xt::xtensor<double,4> Stress(const xt::xtensor<double,4>& Eps) const;
-    xt::xtensor<double,2> Energy(const xt::xtensor<double,4>& Eps) const;
-    xt::xtensor<size_t,2> Find(const xt::xtensor<double,4>& Eps) const;
-    xt::xtensor<double,2> Epsy(const xt::xtensor<size_t,2>& idx) const;
-    xt::xtensor<double,2> Epsp(const xt::xtensor<double,4>& Eps) const;
-
-    std::tuple<xt::xtensor<double,4>, xt::xtensor<double,6>>
-    Tangent(const xt::xtensor<double,4>& Eps) const;
+    xt::xtensor<double,4> Stress() const;
+    xt::xtensor<double,6> Tangent() const;
+    xt::xtensor<double,2> Energy() const;
+    xt::xtensor<size_t,2> Index() const;
+    xt::xtensor<double,2> Epsy_pos() const;
+    xt::xtensor<double,2> Epsy_neg() const;
+    xt::xtensor<double,2> Epsp() const;
 
 private:
 
