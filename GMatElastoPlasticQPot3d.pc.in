@@ -2,6 +2,6 @@ prefix=@CMAKE_INSTALL_PREFIX@
 includedir=${prefix}/include
 
 Name: @PROJECT_NAME@
-Description: Linear elastic material model.
+Description: Elasto-plastic material model based on a manifold of quadratic potentials.
 Version: @GMATELASTOPLASTICQPOT3D_VERSION@
 Cflags: -I${includedir}

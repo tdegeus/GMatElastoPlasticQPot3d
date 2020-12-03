@@ -1,6 +1,6 @@
 # GMatElastoPlasticQPot3d
 
-[![Travis](https://travis-ci.com/tdegeus/GMatElastoPlasticQPot3d.svg?branch=master)](https://travis-ci.com/tdegeus/GMatElastoPlasticQPot3d)
+[![CI](https://github.com/tdegeus/GMatElastoPlasticQPot3d/workflows/CI/badge.svg)](https://github.com/tdegeus/GMatElastoPlasticQPot3d/actions)
 
 3-d and 2-d plane strain implementation of 
 [GMatElastoPlasticQPot](https://github.com/tdegeus/GMatElastoPlasticQPot), 

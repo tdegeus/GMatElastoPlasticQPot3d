@@ -1,0 +1,8 @@
+channels:
+  - conda-forge
+dependencies:
+  - catch2
+  - goosefem
+  - numpy
+  - h5py
+  - gmatelastoplasticqpot
