@@ -12,6 +12,7 @@
 
 #include <QPot/Static.hpp>
 #include <GMatTensor/Cartesian3d.h>
+#include <GMatElastic/Cartesian3d.h>
 #include <math.h>
 #include <xtensor/xsort.hpp>
 
@@ -54,36 +55,11 @@ inline auto Sigd(const T& A);
 
 // Material point
 
-class Elastic
+class Elastic : public GMatElastic::Cartesian3d::Elastic
 {
 public:
     Elastic() = default;
     Elastic(double K, double G);
-
-    double K() const; // return bulk modulus
-    double G() const; // return shear modulus
-
-    double energy() const; // return potential energy
-
-    template <class T> void setStrain(const T& arg);
-    template <class T> void strain(T& ret) const;
-    template <class T> void stress(T& ret) const;
-    template <class T> void tangent(T& ret) const;
-
-    template <class T> void setStrainPtr(const T* arg);
-    template <class T> void strainPtr(T* ret) const;
-    template <class T> void stressPtr(T* ret) const;
-    template <class T> void tangentPtr(T* ret) const;
-
-    xt::xtensor<double, 2> Strain() const;
-    xt::xtensor<double, 2> Stress() const;
-    xt::xtensor<double, 4> Tangent() const;
-
-private:
-    double m_K; // bulk modulus
-    double m_G; // shear modulus
-    std::array<double, 9> m_Eps; // strain tensor [xx, xy, xz, yx, yy, yz, zx, zy, zz]
-    std::array<double, 9> m_Sig; // stress tensor [xx, xy, xz, yx, yy, yz, zx, zy, zz]
 };
 
 // Material point
@@ -130,7 +106,7 @@ private:
     double m_G;                  // shear modulus
     QPot::Static m_yield;        // potential energy landscape
     std::array<double, 9> m_Eps; // strain tensor [xx, xy, xz, yx, yy, yz, zx, zy, zz]
-    std::array<double, 9> m_Sig; // stress tensor [xx, xy, xz, yx, yy, yz, zx, zy, zz]
+    std::array<double, 9> m_Sig; // stress tensor ,,
 };
 
 // Material point
@@ -177,7 +153,7 @@ private:
     double m_G;                  // shear modulus
     QPot::Static m_yield;        // potential energy landscape
     std::array<double, 9> m_Eps; // strain tensor [xx, xy, xz, yx, yy, yz, zx, zy, zz]
-    std::array<double, 9> m_Sig; // stress tensor [xx, xy, xz, yx, yy, yz, zx, zy, zz]
+    std::array<double, 9> m_Sig; // stress tensor ,,
 };
 
 // Material identifier
@@ -191,7 +167,7 @@ struct Type {
     };
 };
 
-// Matrix of material points
+// Array of material points
 
 template <size_t N>
 class Array : public GMatTensor::Cartesian3d::Array<N>
