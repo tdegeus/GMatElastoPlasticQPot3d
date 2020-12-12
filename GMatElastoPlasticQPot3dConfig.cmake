@@ -34,22 +34,16 @@ get_target_property(
 # Find dependencies
 
 find_dependency(xtensor)
+find_dependency(QPot)
+find_dependency(GMatTensor)
+find_dependency(GMatElastic)
 
 # Define support target "GMatElastoPlasticQPot3d::compiler_warnings"
 
 if(NOT TARGET GMatElastoPlasticQPot3d::compiler_warnings)
     add_library(GMatElastoPlasticQPot3d::compiler_warnings INTERFACE IMPORTED)
-    if(MSVC)
-        set_property(
-            TARGET GMatElastoPlasticQPot3d::compiler_warnings
-            PROPERTY INTERFACE_COMPILE_OPTIONS
-            /W4)
-    else()
-        set_property(
-            TARGET GMatElastoPlasticQPot3d::compiler_warnings
-            PROPERTY INTERFACE_COMPILE_OPTIONS
-            -Wall -Wextra -pedantic -Wno-unknown-pragmas)
-    endif()
+    target_link_libraries(GMatElastoPlasticQPot3d::compiler_warnings INTERFACE
+        GMatTensor::compiler_warnings)
 endif()
 
 # Define support target "GMatElastoPlasticQPot3d::assert"
@@ -59,7 +53,9 @@ if(NOT TARGET GMatElastoPlasticQPot3d::assert)
     set_property(
         TARGET GMatElastoPlasticQPot3d::assert
         PROPERTY INTERFACE_COMPILE_DEFINITIONS
-        GMATELASTOPLASTICQPOT3D_ENABLE_ASSERT)
+        GMATELASTOPLASTICQPOT3D_ENABLE_ASSERT
+        GMATTENSOR_ENABLE_ASSERT
+        QPOT_ENABLE_ASSERT)
 endif()
 
 # Define support target "GMatElastoPlasticQPot3d::debug"
@@ -69,5 +65,8 @@ if(NOT TARGET GMatElastoPlasticQPot3d::debug)
     set_property(
         TARGET GMatElastoPlasticQPot3d::debug
         PROPERTY INTERFACE_COMPILE_DEFINITIONS
-        XTENSOR_ENABLE_ASSERT GMATELASTOPLASTICQPOT3D_ENABLE_ASSERT)
+        XTENSOR_ENABLE_ASSERT
+        GMATELASTOPLASTICQPOT3D_ENABLE_ASSERT
+        GMATTENSOR_ENABLE_ASSERT
+        QPOT_ENABLE_ASSERT)
 endif()

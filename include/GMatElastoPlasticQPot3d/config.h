@@ -7,26 +7,6 @@
 #ifndef GMATELASTOPLASTICQPOT3D_CONFIG_H
 #define GMATELASTOPLASTICQPOT3D_CONFIG_H
 
-// use "M_PI" from "math.h"
-#define _USE_MATH_DEFINES
-
-#include <tuple>
-#include <stdexcept>
-#include <limits>
-#include <math.h>
-#include <iostream>
-#include <vector>
-#include <xtensor/xarray.hpp>
-#include <xtensor/xtensor.hpp>
-#include <xtensor/xnoalias.hpp>
-#include <xtensor/xfixed.hpp>
-#include <xtensor/xadapt.hpp>
-#include <xtensor/xview.hpp>
-#include <xtensor/xio.hpp>
-#include <xtensor/xoperation.hpp>
-#include <xtensor/xsort.hpp>
-#include <xtensor/xmath.hpp>
-
 #ifdef GMATELASTOPLASTICQPOT3D_ENABLE_ASSERT
 
     #define GMATELASTOPLASTICQPOT3D_ASSERT(expr) \
@@ -46,7 +26,7 @@
 #endif
 
 #define GMATELASTOPLASTICQPOT3D_VERSION_MAJOR 0
-#define GMATELASTOPLASTICQPOT3D_VERSION_MINOR 5
+#define GMATELASTOPLASTICQPOT3D_VERSION_MINOR 11
 #define GMATELASTOPLASTICQPOT3D_VERSION_PATCH 0
 
 #define GMATELASTOPLASTICQPOT3D_VERSION_AT_LEAST(x,y,z) \
