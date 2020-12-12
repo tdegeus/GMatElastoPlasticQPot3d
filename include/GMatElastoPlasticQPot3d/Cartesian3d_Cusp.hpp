@@ -107,7 +107,7 @@ inline void Cusp::setStrainPtr(const T* arg)
     std::copy(arg, arg + 9, m_Eps.begin());
 
     std::array<double, 9> Epsd;
-    double epsm = GT::hydrostatic_deviatoric(&m_Eps[0], &Epsd[0]);
+    double epsm = GT::Hydrostatic_deviatoric(&m_Eps[0], &Epsd[0]);
     double epsd = std::sqrt(0.5 * GT::A2s_ddot_B2s(&Epsd[0], &Epsd[0]));
     m_yield.setPosition(epsd);
 
