@@ -77,8 +77,8 @@ inline double Cusp::energy() const
 {
     namespace GT = GMatTensor::Cartesian3d::pointer;
     std::array<double, 9> Epsd;
-    double epsm = GT::hydrostatic_deviatoric(&m_Eps[0], &Epsd[0]);
-    double epsd = std::sqrt(0.5 * GT::A2_ddot_B2(&Epsd[0], &Epsd[0]));
+    double epsm = GT::Hydrostatic_deviatoric(&m_Eps[0], &Epsd[0]);
+    double epsd = std::sqrt(0.5 * GT::A2s_ddot_B2s(&Epsd[0], &Epsd[0]));
 
     double U = 3.0 * m_K * std::pow(epsm, 2.0);
 

@@ -23,6 +23,8 @@ namespace Cartesian3d {
 
 // Unit tensors
 
+using GMatTensor::Cartesian3d::O2;
+using GMatTensor::Cartesian3d::O4;
 using GMatTensor::Cartesian3d::I2;
 using GMatTensor::Cartesian3d::II;
 using GMatTensor::Cartesian3d::I4;
@@ -70,18 +72,18 @@ public:
     Cusp() = default;
     Cusp(double K, double G, const xt::xtensor<double, 1>& epsy, bool init_elastic = true);
 
-    double K() const; // return bulk modulus
-    double G() const; // return shear modulus
-    xt::xtensor<double, 1> epsy() const; // return yield strains
+    double K() const; // bulk modulus
+    double G() const; // shear modulus
+    xt::xtensor<double, 1> epsy() const; // yield strains
 
-    auto getQPot() const; // return underlying QPot model
-    auto* refQPot(); // return reference to underlying QPot model
+    auto getQPot() const; // underlying QPot model
+    auto* refQPot();      // reference to underlying QPot model
 
-    size_t currentIndex() const;      // return yield index
-    double currentYieldLeft() const;  // return yield strain left epsy[index]
-    double currentYieldRight() const; // return yield strain right epsy[index + 1]
-    double epsp() const;   // return "plastic strain" = 0.5 * (currentYieldLeft + currentYieldRight)
-    double energy() const; // return potential energy
+    size_t currentIndex() const;      // yield index
+    double currentYieldLeft() const;  // yield strain left epsy[index]
+    double currentYieldRight() const; // yield strain right epsy[index + 1]
+    double epsp() const;   // "plastic strain" = 0.5 * (currentYieldLeft + currentYieldRight)
+    double energy() const; // potential energy
 
     // Check that 'the particle' is at least "n" wells from the far-left/right
     bool checkYieldBoundLeft(size_t n = 0) const;
@@ -117,18 +119,18 @@ public:
     Smooth() = default;
     Smooth(double K, double G, const xt::xtensor<double, 1>& epsy, bool init_elastic = true);
 
-    double K() const; // return bulk modulus
-    double G() const; // return shear modulus
-    xt::xtensor<double, 1> epsy() const; // return yield strains
+    double K() const; // bulk modulus
+    double G() const; // shear modulus
+    xt::xtensor<double, 1> epsy() const; // yield strains
 
-    auto getQPot() const; // return underlying QPot model
-    auto* refQPot(); // return reference to underlying QPot model
+    auto getQPot() const; // underlying QPot model
+    auto* refQPot();      // reference to underlying QPot model
 
-    size_t currentIndex() const;      // return yield index
-    double currentYieldLeft() const;  // return yield strain left epsy[index]
-    double currentYieldRight() const; // return yield strain right epsy[index + 1]
-    double epsp() const;   // return "plastic strain" = 0.5 * (currentYieldLeft + currentYieldRight)
-    double energy() const; // return potential energy
+    size_t currentIndex() const;      // yield index
+    double currentYieldLeft() const;  // yield strain left epsy[index]
+    double currentYieldRight() const; // yield strain right epsy[index + 1]
+    double epsp() const;   // "plastic strain" = 0.5 * (currentYieldLeft + currentYieldRight)
+    double energy() const; // potential energy
 
     // Check that 'the particle' is at least "n" wells from the far-left/right
     bool checkYieldBoundLeft(size_t n = 0) const;
@@ -196,6 +198,12 @@ public:
 
     xt::xtensor<double, N> K() const;
     xt::xtensor<double, N> G() const;
+
+    // Set purely elastic
+
+    void setElastic(
+        const xt::xtensor<double, N>& K,
+        const xt::xtensor<double, N>& G);
 
     // Set parameters for a batch of points
     // (uniform for all points specified: that have "I(i, j) == 1")
