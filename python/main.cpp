@@ -5,12 +5,10 @@
 */
 
 #include <pybind11/pybind11.h>
-#include <pyxtensor/pyxtensor.hpp>
+#include <pybind11/stl.h>
 
-// Enable basic assertions on matrix shape
-// (doesn't cost a lot of time, but avoids segmentation faults)
-#define QPOT_ENABLE_ASSERT
-#define GMATELASTOPLASTICQPOT3D_ENABLE_ASSERT
+#define FORCE_IMPORT_ARRAY
+#include <xtensor-python/pytensor.hpp>
 
 #include <GMatElastoPlasticQPot3d/Cartesian3d.h>
 
@@ -194,10 +192,19 @@ void add_sigd_overloads(T& module)
         py::arg("A"));
 }
 
-PYBIND11_MODULE(GMatElastoPlasticQPot3d, m)
+PYBIND11_MODULE(_GMatElastoPlasticQPot3d, m)
 {
+    xt::import_numpy();
 
     m.doc() = "Elasto-plastic material model";
+
+    m.def("version",
+          &GMatElastoPlasticQPot3d::version,
+          "Return version string.");
+
+    m.def("version_dependencies",
+          &GMatElastoPlasticQPot3d::version_dependencies,
+          "Return list of strings.");
 
     // ---------------------------------
     // GMatElastoPlasticQPot3d.Cartesian3d
