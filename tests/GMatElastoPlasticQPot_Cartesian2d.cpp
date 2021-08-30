@@ -1,4 +1,4 @@
-
+#define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
 #include <xtensor/xrandom.hpp>
 #include <GMatElastoPlasticQPot/Cartesian2d.h>
@@ -85,7 +85,7 @@ TEST_CASE("GMatElastoPlasticQPot_Cartesian2d", "GMatElastoPlasticQPot_Cartesian2
         xt::xtensor<double, 2> Eps_RF = xt::view(Eps_GM, xt::range(0, 2), xt::range(0, 2));
 
         GM::Cusp mat_GM(kappa, mu, {0.01, 0.5, 1.0, 2.0});
-        RF::Cusp mat_RF(kappa * 3.0, mu * 2.0, {0.01, 0.5, 1.0, 2.0});
+        RF::Cusp mat_RF(kappa * 3.0, mu * 2.0, xt::xtensor<double , 1>{0.01, 0.5, 1.0, 2.0});
 
         mat_GM.setStrain(Eps_GM);
         mat_RF.setStrain(Eps_RF);
@@ -101,7 +101,7 @@ TEST_CASE("GMatElastoPlasticQPot_Cartesian2d", "GMatElastoPlasticQPot_Cartesian2
         REQUIRE(mat_GM.epsp() == Approx(mat_RF.epsp()));
         REQUIRE(mat_GM.currentYieldLeft() == Approx(mat_RF.currentYieldLeft()));
         REQUIRE(mat_GM.currentYieldRight() == Approx(mat_RF.currentYieldRight()));
-        REQUIRE(mat_GM.currentIndex() == mat_RF.currentIndex());
+        REQUIRE(static_cast<long>(mat_GM.currentIndex()) == mat_RF.currentIndex());
     }
 
     SECTION("Smooth")
@@ -124,7 +124,7 @@ TEST_CASE("GMatElastoPlasticQPot_Cartesian2d", "GMatElastoPlasticQPot_Cartesian2
         xt::xtensor<double, 2> Eps_RF = xt::view(Eps_GM, xt::range(0, 2), xt::range(0, 2));
 
         GM::Smooth mat_GM(kappa, mu, {0.01, 0.5, 1.0, 2.0});
-        RF::Smooth mat_RF(kappa * 3.0, mu * 2.0, {0.01, 0.5, 1.0, 2.0});
+        RF::Smooth mat_RF(kappa * 3.0, mu * 2.0, xt::xtensor<double , 1>{0.01, 0.5, 1.0, 2.0});
 
         mat_GM.setStrain(Eps_GM);
         mat_RF.setStrain(Eps_RF);
@@ -140,7 +140,7 @@ TEST_CASE("GMatElastoPlasticQPot_Cartesian2d", "GMatElastoPlasticQPot_Cartesian2
         REQUIRE(mat_GM.epsp() == Approx(mat_RF.epsp()));
         REQUIRE(mat_GM.currentYieldLeft() == Approx(mat_RF.currentYieldLeft()));
         REQUIRE(mat_GM.currentYieldRight() == Approx(mat_RF.currentYieldRight()));
-        REQUIRE(mat_GM.currentIndex() == mat_RF.currentIndex());
+        REQUIRE(static_cast<long>(mat_GM.currentIndex()) == mat_RF.currentIndex());
     }
 
     SECTION("Array")
