@@ -5,6 +5,7 @@ dependencies:
   - cmake
   - doxygen
   - gmatelastic
+  - gmatelastoplasticqpot
   - gmattensor
   - h5py
   - ninja
